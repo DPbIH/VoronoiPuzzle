@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.voronoi.puzzle"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
+
+    <application
+        android:name=".VoronoiApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        
+        <activity
+            android:name="com.voronoi.puzzle.StartPage"
+            android:label="@string/title_activity_start_page" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.voronoi.puzzle.GamePlay"
+            android:label="@string/app_name" >
+        </activity>
+        
+        <activity
+            android:name="com.voronoi.puzzle.PuzzleEditor"
+            android:label="@string/title_activity_puzzle_editor" >
+        </activity>
+        
+    </application>
+</manifest>

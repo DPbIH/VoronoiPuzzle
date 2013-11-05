@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/texture"
+    tools:context=".PuzzleEditor" >
+
+    <LinearLayout
+        android:id="@+id/toolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:gravity="left" >
+
+        <ImageButton
+            android:id="@+id/loadImgBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_launcher"
+            android:layout_marginLeft="10dp"
+             android:onClick="loadImage"
+	        />
+
+        <Spinner
+            android:id="@+id/tilesCountSetter"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+	        />
+
+        <Button
+            android:id="@+id/generateDiaBtn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Rand"
+            android:layout_marginLeft="10dp"
+	        />
+        
+        <Button
+            android:id="@+id/resetDiaBtn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Reset"
+            android:layout_marginLeft="10dp"
+	        />
+        
+        <Button
+            android:id="@+id/createPuzzleBtn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Create"
+            android:layout_marginLeft="10dp"
+            android:onClick="startGamePlay"
+	        />
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/auxOptionslayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/toolbarLayout"
+        android:background="@color/black"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ToggleButton
+            android:id="@+id/enableDragBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:text="ToggleButton" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Voronoi Puzzle</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_puzzle_editor">PuzzleEditor</string>
+    <string name="title_activity_start_page">StartPage</string>
+    <string name="PickImageSource">Select image source</string>
+    <string-array name="ImageSourcesArray">
+        <item >Camera</item>
+        <item >Application Gallery</item>
+        <item >Device Gallery</item><item >File System</item>
+        
+    </string-array>
+
+</resources>
