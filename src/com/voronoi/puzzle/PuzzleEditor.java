@@ -1,12 +1,16 @@
 package com.voronoi.puzzle;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -26,12 +30,12 @@ import android.widget.LinearLayout;
 public class PuzzleEditor extends Activity implements MediaScannerConnectionClient 
 {
 	private static final int PICK_IMAGE_FROM_CHOOSER 	= 1;
-	private static final int PICK_FILE_FROM_DIALOG 		= 2;
+	private static final int PICK_IMAGE_USE_CAMERA 		= 2;
 	private static final String mimeTypeImage 			= "image/*";
 	
 	private String SCAN_PATH;
 	private MediaScannerConnection conn;
-	private Uri imgUri_;
+	private Uri imgUri_, uriWorkaround_;
 	private File fileSelectedInPreviewer_;
 
 	@Override
@@ -88,6 +92,15 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 					switch(which)
 					{
 					case 0:
+						try 
+						{
+							editor.captureImageUsingCamera();
+						}
+						catch (IOException e) 
+						{
+							e.printStackTrace();
+						}
+						
 						break;
 					case 1:
 						editor.pickImageFromAppGallery();
@@ -96,7 +109,8 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 						editor.pickImageFromDeviceGallery();
 						break;
 					case 3:
-						editor.exploreFileSystemAndPickImage( Environment.getExternalStorageDirectory().getAbsolutePath() );
+						editor.exploreFileSystemAndPickImage( 
+								Environment.getExternalStorageDirectory().getAbsolutePath() );
 						break;
 					};
 				}
@@ -108,14 +122,44 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
-        if (requestCode == PICK_IMAGE_FROM_CHOOSER) 
-        {
-            if (resultCode == RESULT_OK) 
-            {
-            	setImageUri( data.getData() );
-            }
-        }
+		switch(requestCode)
+		{
+		case PICK_IMAGE_USE_CAMERA:
+			if( (resultCode == RESULT_OK) && (data == null) )
+			{
+				setImageUri(uriWorkaround_);
+				break;
+			}
+		case PICK_IMAGE_FROM_CHOOSER:
+			if( (resultCode == RESULT_OK) )
+	        {
+	        	setImageUri( data.getData() );
+	        }
+			break;
+		}
     }
+	
+	private File createFileForImageInAppGallery() throws IOException
+	{
+		File appGallery = new File( ((VoronoiApplication)this.getApplication()).ImageGalleryPath() );
+	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	    String imageFileName = "Gallery_" + timeStamp;
+	    File image = File.createTempFile( imageFileName, ".jpg", appGallery );
+	    
+	    return image;
+	}
+	
+	public void captureImageUsingCamera() throws IOException
+	{
+		File img = createFileForImageInAppGallery();
+		
+		// MediaStore.EXTRA_OUTPUT bug workaround
+		uriWorkaround_ = Uri.fromFile(img);
+		
+		Intent takePictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
+		takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(img));
+	    startActivityForResult( takePictureIntent, PICK_IMAGE_USE_CAMERA );
+	}
 	
 	public void exploreFileSystemAndPickImage( String path )
 	{
@@ -124,7 +168,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
         FileDialog fileDialog = new FileDialog(this, dir);
         fileDialog.setMIMEFilter( mimeTypeImage );
         
-        fileDialog.addFileListener(new FileDialog.FileSelectedListener() 
+        fileDialog.addFileListener(new FileDialog.FileSelectedListener()
         {
             public void fileSelected(File file)
             {

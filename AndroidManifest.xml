@@ -3,6 +3,8 @@
     package="com.voronoi.puzzle"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <uses-feature android:name="android.hardware.camera" />
 
     <uses-sdk
         android:minSdkVersion="11"
