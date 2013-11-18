@@ -86,7 +86,6 @@ public class FileDialog {
 		return dialog;
 	}
 
-
 	public void addFileListener(FileSelectedListener listener) {
 		fileListenerList.add(listener);
 	}
