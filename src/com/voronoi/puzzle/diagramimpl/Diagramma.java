@@ -1,30 +1,18 @@
 package com.voronoi.puzzle.diagramimpl;
 
 import java.util.*;
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.awt.geom.RoundRectangle2D;
 import java.lang.Exception;
 
-/**
- * Il codice implementa le strutture dati per il Diagramma di Voronoi.
- * @author Indrit Selimi.
- * Il diagramma é costituito da un insieme di celle.
- */
+import android.graphics.PointF;
+import android.graphics.RectF;
+
 public class Diagramma 
 {
-
-	/**
-	 * Costruisce un diagramma di Voronoi.
-	 * @param sizeX la larghezza del diagramma.
-	 * @param sizeY l'altezza del diagramma.
-	 */
 	public Diagramma(int sizeX, int sizeY)
 	{
 		maxX = sizeX;
@@ -41,25 +29,18 @@ public class Diagramma
 
 	public void aggiungiCellaRossa(Cella cella)
 	{
-		cella.setColore(true); /// colore rosso
+		cella.setColore(true);
 		aggiungiCella(cella);
 	}
 
 	public void aggiungiCellaBlu(Cella cella)
 	{
-		cella.setColore(false); /// colore rosso
+		cella.setColore(false);
 		aggiungiCella(cella);
 	}
 
-
-	/**
-	 * Aggiunge una cella nella struttura dati.
-	 * @param cella la cella da inserire.
-	 */
-
 	public void aggiungiCella(Cella cella)
 	{
-		// variabili locali inizio...
 		Iterator listaCelle;
 		Iterator listaFrontiere;
 		yyy = 0;
@@ -71,36 +52,27 @@ public class Diagramma
 
 		Cella cella1, cella2, cellaFatta;
 		Frontiera front, front1, front2, front3, front4, newFront;
-		Point2D.Double punto1, punto2, punto3, punto, limit;
+		PointF punto1, punto2, punto3, punto, limit;
 
 		boolean loop = false; 
 		boolean doneFlag = false;
-		// fine variabili locali
 
-		// inizializzazione variabili
 		front1 = front2 = front3 = front4 = front = null;
 		punto1 = punto2 = punto3 = null;
 		cella1 = cella2 = null;
 
-		// se la distanza é minore di quella minima ritorna...
 		if(trovaSito(cella.getKernel()) != null)
 		{
 			return;
 		}
 
-		// aggiunge un nuovo elemento(sito)
-
-		// cella.setColore((celle.size() % 2 == 0));
 		celle.add(cella);
-		//celleFatte.add(cella);
-
-		//aggiunge i bordi dell quadrato  aggiungendo quattro frontiere alla prima cella
 		if(celle.size() == 1)
 		{
-			Point2D.Double p1 = new Point2D.Double(0, 0);
-			Point2D.Double p2 = new Point2D.Double(maxX, 0);
-			Point2D.Double p3 = new Point2D.Double(maxX, maxY);
-			Point2D.Double p4 = new Point2D.Double(0, maxY);
+			PointF p1 = new PointF(0, 0);
+			PointF p2 = new PointF(maxX, 0);
+			PointF p3 = new PointF(maxX, maxY);
+			PointF p4 = new PointF(0, maxY);
 
 			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p1, p4));
 			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p4, p3));
@@ -173,8 +145,8 @@ public class Diagramma
 			aggiungiFrontiera(cella1, newFront); 
 
 
-			if(cella1.getKernel().distance(front1.getPuntoUno()) < 
-					cella.getKernel().distance(front1.getPuntoUno()))
+			if( GetDistance( cella1.getKernel(), front1.getPuntoUno() ) < 
+					GetDistance( cella.getKernel(), front1.getPuntoUno() ) )
 			{
 				limit = front1.getPuntoDue();
 				front1.setPuntoDue(punto1);
@@ -205,8 +177,8 @@ public class Diagramma
 
 				// Scorre sui punti frontiera della cella e verifica
 				// se sono stati aggiornati, eventualmente gli elimina.
-				if(front.getPuntoUno().distance(cella.getKernel()) <
-						front.getPuntoUno().distance(cella1.getKernel()))
+				if( GetDistance( front.getPuntoUno(), cella.getKernel() ) <
+						GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
 				{
 					oldFront.add(front);
 					if(front.isEdge())
@@ -257,8 +229,8 @@ public class Diagramma
 				this.aggiungiFrontiera(cella, newFront);
 				this.aggiungiFrontiera(cella1, newFront);
 
-				if(cella1.getKernel().distance(front3.getPuntoUno()) < 
-						cella.getKernel().distance(front3.getPuntoUno()))
+				if( GetDistance( cella1.getKernel(), front3.getPuntoUno() ) < 
+						GetDistance( cella.getKernel(), front3.getPuntoUno() ) )
 				{
 					limit = front3.getPuntoDue();
 					front3.setPuntoDue(punto3);
@@ -291,8 +263,8 @@ public class Diagramma
 					// vicino alla nuova cella(quella entrante o corrente) che
 					// alla cella alla quale appartenevano  vuol dire che non le 
 					// appartengono più!
-					if(front.getPuntoUno().distance(cella.getKernel())
-							< front.getPuntoUno().distance(cella1.getKernel()))
+					if( GetDistance( front.getPuntoUno(), cella.getKernel() ) < 
+							GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
 					{
 						oldFront.add(front);
 
@@ -325,8 +297,8 @@ public class Diagramma
 			cella1 = cella2;
 			if(!loop)
 			{
-				if(cella1.getKernel().distance(front2.getPuntoUno()) <
-						cella.getKernel().distance(front2.getPuntoUno()))
+				if( GetDistance( cella1.getKernel(), front2.getPuntoUno() ) <
+						GetDistance( cella.getKernel(), front2.getPuntoUno() ) )
 				{
 					limit = front2.getPuntoDue();
 					front2.setPuntoDue(punto2);
@@ -377,8 +349,8 @@ public class Diagramma
 					this.aggiungiFrontiera(cella, newFront);
 					this.aggiungiFrontiera(cella1, newFront);
 
-					if(cella1.getKernel().distance(front3.getPuntoUno()) < 
-							cella.getKernel().distance(front3.getPuntoUno()))
+					if( GetDistance( cella1.getKernel(), front3.getPuntoUno() ) < 
+							GetDistance( cella.getKernel(), front3.getPuntoUno() ) )
 					{
 						limit = front3.getPuntoDue();
 						front3.setPuntoDue(punto3);
@@ -407,8 +379,8 @@ public class Diagramma
 							continue;
 
 
-						if(front.getPuntoUno().distance(cella.getKernel()) < 
-								front.getPuntoUno().distance(cella1.getKernel()))
+						if( GetDistance( front.getPuntoUno(), cella.getKernel() ) < 
+								GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
 						{
 							oldFront.add(front);
 
@@ -442,30 +414,30 @@ public class Diagramma
 			while(listaFrontiereCella.hasNext())
 			{            
 				front = (Frontiera) listaFrontiereCella.next();
-				if(isUguale(front.getPuntoUno().getX(), maxX) && 
-						isUguale(front.getPuntoDue().getX(), maxX))
+				if(isUguale(front.getPuntoUno().x, maxX) && 
+						isUguale(front.getPuntoDue().x, maxX))
 				{
 					if(edge2)
 					{
 						punto1 = front2.getPuntoUno();
 						punto2 = front2.getPuntoUno();
 
-						if(punto1.getY() < front2.getPuntoDue().getY())
+						if(punto1.y < front2.getPuntoDue().y)
 							punto1 = front2.getPuntoDue();
 
-						if(punto2.getY() > front2.getPuntoDue().getY()) 
+						if(punto2.y > front2.getPuntoDue().y) 
 							punto2 = front2.getPuntoDue();
 
-						if(punto1.getY() < front.getPuntoUno().getY()) 
+						if(punto1.y < front.getPuntoUno().y) 
 							punto1 = front.getPuntoUno();
 
-						if(punto2.getY() > front.getPuntoUno().getY()) 
+						if(punto2.y > front.getPuntoUno().y) 
 							punto2 = front.getPuntoUno();
 
-						if(punto1.getY() < front.getPuntoDue().getY())
+						if(punto1.y < front.getPuntoDue().y)
 							punto1 = front.getPuntoDue();
 
-						if(punto2.getY() > front.getPuntoDue().getY()) 
+						if(punto2.y > front.getPuntoDue().y) 
 							punto2 = front.getPuntoDue();
 
 
@@ -482,8 +454,8 @@ public class Diagramma
 					}
 				} 
 
-				if(isUguale(front.getPuntoUno().getX(), 0) &&
-						isUguale(front.getPuntoDue().getX(), 0))
+				if(isUguale(front.getPuntoUno().x, 0) &&
+						isUguale(front.getPuntoDue().x, 0))
 				{
 					if(edge4)
 					{
@@ -491,22 +463,22 @@ public class Diagramma
 						punto2 = front4.getPuntoUno();
 
 
-						if(punto1.getY() < front4.getPuntoDue().getY())
+						if(punto1.y < front4.getPuntoDue().y)
 							punto1 = front4.getPuntoDue();
 
-						if(punto2.getY() > front4.getPuntoDue().getY()) 
+						if(punto2.y > front4.getPuntoDue().y) 
 							punto2 = front4.getPuntoDue();
 
-						if(punto1.getY() < front.getPuntoUno().getY())
+						if(punto1.y < front.getPuntoUno().y)
 							punto1 = front.getPuntoUno();
 
-						if(punto2.getY() > front.getPuntoUno().getY()) 
+						if(punto2.y > front.getPuntoUno().y) 
 							punto2 = front.getPuntoUno();
 
-						if(punto1.getY() < front.getPuntoDue().getY())
+						if(punto1.y < front.getPuntoDue().y)
 							punto1 = front.getPuntoDue();
 
-						if(punto2.getY() > front.getPuntoDue().getY())
+						if(punto2.y > front.getPuntoDue().y)
 							punto2 = front.getPuntoDue();
 
 
@@ -523,8 +495,8 @@ public class Diagramma
 					}
 				}
 
-				if(isUguale(front.getPuntoUno().getY(),0)
-						&& isUguale(front.getPuntoDue().getY(), 0))
+				if(isUguale(front.getPuntoUno().y,0)
+						&& isUguale(front.getPuntoDue().y, 0))
 				{
 					if(edge1)
 					{
@@ -532,22 +504,22 @@ public class Diagramma
 						punto2 = front1.getPuntoUno();
 
 
-						if(punto1.getX() > front1.getPuntoDue().getX())
+						if(punto1.x > front1.getPuntoDue().x)
 							punto1 = front1.getPuntoDue();
 
-						if(punto2.getX() < front1.getPuntoDue().getX()) 
+						if(punto2.x < front1.getPuntoDue().x) 
 							punto2 = front1.getPuntoDue();
 
-						if(punto1.getX() > front.getPuntoUno().getX()) 
+						if(punto1.x > front.getPuntoUno().x) 
 							punto1 = front.getPuntoUno();
 
-						if(punto2.getX() < front.getPuntoUno().getX()) 
+						if(punto2.x < front.getPuntoUno().x) 
 							punto2 = front.getPuntoUno();
 
-						if(punto1.getX() > front.getPuntoDue().getX())
+						if(punto1.x > front.getPuntoDue().x)
 							punto1 = front.getPuntoDue();
 
-						if(punto2.getX() < front.getPuntoDue().getX()) 
+						if(punto2.x < front.getPuntoDue().x) 
 							punto2 = front.getPuntoDue();
 
 
@@ -564,8 +536,8 @@ public class Diagramma
 					}
 				} 
 
-				if(isUguale(front.getPuntoUno().getY(), maxY) && 
-						isUguale(front.getPuntoDue().getY(), maxY))
+				if(isUguale(front.getPuntoUno().y, maxY) && 
+						isUguale(front.getPuntoDue().y, maxY))
 				{
 					if(edge3)
 					{
@@ -573,22 +545,22 @@ public class Diagramma
 						punto2 = front3.getPuntoUno();
 
 
-						if(punto1.getX() > front3.getPuntoDue().getX())
+						if(punto1.x > front3.getPuntoDue().x)
 							punto1 = front3.getPuntoDue();
 
-						if(punto2.getX() < front3.getPuntoDue().getX())
+						if(punto2.x < front3.getPuntoDue().x)
 							punto2 = front3.getPuntoDue();
 
-						if(punto1.getX() > front.getPuntoUno().getX())
+						if(punto1.x > front.getPuntoUno().x)
 							punto1 = front.getPuntoUno();
 
-						if(punto2.getX() < front.getPuntoUno().getX()) 
+						if(punto2.x < front.getPuntoUno().x) 
 							punto2 = front.getPuntoUno();
 
-						if(punto1.getX() > front.getPuntoDue().getX()) 
+						if(punto1.x > front.getPuntoDue().x) 
 							punto1 = front.getPuntoDue();
 
-						if(punto2.getX() < front.getPuntoDue().getX())
+						if(punto2.x < front.getPuntoDue().x)
 							punto2 = front.getPuntoDue();
 
 
@@ -619,18 +591,23 @@ public class Diagramma
 		} 
 
 	}
+	
+	private static float GetDistance(PointF point1, PointF point2)
+	{
+	    float a = point2.x - point1.x;
+	    float b = point2.y - point1.y;
+	    return (float)Math.sqrt(a * a + b * b);
+	}
 
 	public boolean aggiungiFrontiera(Cella sito, Frontiera frontier)
 	{
 		Cella p = frontier.getVicinoDi(sito);
-
 		return sito.getVfrontiere().add(frontier);
 	}
 
 	public boolean cancellaFrontiera(Cella sito, Frontiera frontier)
 	{
 		Cella p = frontier.getVicinoDi(sito);
-
 		return sito.getVfrontiere().remove(frontier);
 	}
 
@@ -670,13 +647,13 @@ public class Diagramma
 	}
 
 
-	public Cella trovaSito(Point2D.Double unPunto)
+	public Cella trovaSito(PointF unPunto)
 	{
 		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
 		{
 			Cella currentSite = (Cella)listaSiti.next();
 			// Qua esiste un'inconsistenza con i pixel, non sempre!
-			if(currentSite.getKernel().distance(unPunto) < (DISTANZA_MIN / 2 - 0.1))            
+			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN / 2 - 0.1))            
 			{
 				return currentSite;
 			}
@@ -684,13 +661,13 @@ public class Diagramma
 		return null;
 	}
 
-	public Cella siteIsDragged(Point2D.Double unPunto, double zom)
+	public Cella siteIsDragged(PointF unPunto, double zom)
 	{
 		Cella tempSito = null;
 		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
 		{
 			Cella currentSite = (Cella)listaSiti.next();
-			if(currentSite.getKernel().distance(unPunto) < (DISTANZA_MIN * 30 / (zom * 0.6))) // Qua esiste un problema di tunning           
+			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN * 30 / (zom * 0.6))) // Qua esiste un problema di tunning           
 			{
 				if(tempSito == null)
 				{
@@ -698,7 +675,7 @@ public class Diagramma
 				}
 				else
 				{
-					if(currentSite.getKernel().distance(unPunto) < tempSito.getKernel().distance(unPunto))
+					if( GetDistance( currentSite.getKernel(), unPunto) < GetDistance( tempSito.getKernel(), unPunto) )
 					{
 						tempSito = currentSite;
 					}
@@ -708,9 +685,9 @@ public class Diagramma
 		return tempSito;
 	}
 
-	public Dimension getSize()
+	public PointF getSize()
 	{
-		return new Dimension((int)maxX, (int)maxY);
+		return new PointF( maxX, maxY );
 	}
 
 	public boolean isUguale(double num, int numIntero)
@@ -754,9 +731,9 @@ public class Diagramma
 		while(listaCelle.hasNext())
 		{
 			Cella cella = (Cella)(listaCelle.next());
-			Point2D.Double kernel = cella.getKernel();
-			double x = kernel.getX();
-			double y = kernel.getY();
+			PointF kernel = cella.getKernel();
+			double x = kernel.x;
+			double y = kernel.y;
 			boolean colore = cella.getColore();
 			out.println(x + "|" + y + "|" + Boolean.toString(colore));
 		}
@@ -772,10 +749,10 @@ public class Diagramma
 			StringTokenizer divisore = new StringTokenizer(riga, "|");
 			try
 			{
-				double x = Double.parseDouble(divisore.nextToken());
-				double y = Double.parseDouble(divisore.nextToken());
+				float x = Float.parseFloat(divisore.nextToken());
+				float y = Float.parseFloat(divisore.nextToken());
 				boolean colore = (Boolean.valueOf(divisore.nextToken())).booleanValue();
-				Point2D.Double p = new Point2D.Double(x, y);
+				PointF p = new PointF(x, y);
 				Cella cella = new Cella (p);
 				cella.setColore(colore);
 				this.aggiungiCella(cella);
@@ -791,26 +768,26 @@ public class Diagramma
 		}
 	}
 
-	public void cancellaArea(RoundRectangle2D unRettangolo, double zoom)
+	public void cancellaArea(RectF unRettangolo, float zoom)
 	{
 		Cella cella = null;
-		RoundRectangle2D rett = unRettangolo;
+		RectF rett = unRettangolo;
 		Iterator it = celle.iterator();
-		Point2D.Double punto;
+		PointF punto;
 		ArrayList siti = new ArrayList();
 
 		while(it.hasNext())
 		{
 			cella = (Cella)it.next();
-			double x = (cella.getKernel()).getX() * zoom;
-			double y = (cella.getKernel()).getY() * zoom;
+			float x = (cella.getKernel()).x * zoom;
+			float y = (cella.getKernel()).y * zoom;
 
 			if(rett.contains(x, y))
 			{
 				siti.add(cella);                   
 			}
-
 		}
+		
 		for(int k = 0; k < siti.size(); k++)
 		{
 			celle.remove((Cella)siti.get(k));
@@ -819,6 +796,7 @@ public class Diagramma
 		ArrayList trasporto = (ArrayList)celle.clone();
 		this.clear();
 		Iterator listaTrasporto = trasporto.iterator();
+		
 		while(listaTrasporto.hasNext())
 		{
 			Cella elementoCorrente = (Cella)listaTrasporto.next();
@@ -827,7 +805,6 @@ public class Diagramma
 			cella.setColore(elementoCorrente.getColore());
 			aggiungiCella(cella);
 		}
-
 	}
 
 	public void help()

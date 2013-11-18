@@ -1,20 +1,10 @@
 package com.voronoi.puzzle.diagramimpl;
 
-import Cella;
-
-import java.awt.geom.Point2D;
-
-/**
- *@author Indrit Selimi.
- */
+import android.graphics.PointF;
 
 public class Frontiera                                                                                                                                                                                                                                                                                                                           
 {
-	/**
-	 * Crea una frontiera che é formata dall'intersezione di due celle.
-	 * I due punti sono delimitatori della frontiera.
-	 */
-	public Frontiera(Cella cellaUno, Cella cellaDue, Point2D.Double limit1, Point2D.Double limit2)
+	public Frontiera(Cella cellaUno, Cella cellaDue, PointF limit1, PointF limit2)
 	{
 		this.cella1 = cellaUno;                                                                           
 		this.cella2 = cellaDue;
@@ -22,22 +12,22 @@ public class Frontiera
 		p2 = limit2;
 	} 
 
-	public Point2D.Double trovaIntersezione(Cella cella)
+	public PointF trovaIntersezione(Cella cella)
 	{
-		double a1, b1, c1;
+		float a1, b1, c1;
 
-		double a2, b2, c2;
+		float a2, b2, c2;
 
-		double a3, b3, c3;
+		float a3, b3, c3;
 
-		double x1, y1, x2, y2;
+		float x1, y1, x2, y2;
 
-		double dx, dy;  
+		float dx, dy;  
 
-		x1 = p1.getX();
-		x2 = p2.getX();
-		y1 = p1.getY();
-		y2 = p2.getY();
+		x1 = p1.x;
+		x2 = p2.x;
+		y1 = p1.y;
+		y2 = p2.y;
 		dx = x2-x1;
 		dy = y2-y1;
 
@@ -54,10 +44,10 @@ public class Frontiera
 			c1 = -b1*y1 - x1;
 		}
 
-		x1 = cella1.getKernel().getX();  
-		x2 = cella.getKernel().getX();
-		y1 = cella1.getKernel().getY();  
-		y2 = cella.getKernel().getY();
+		x1 = cella1.getKernel().x;  
+		x2 = cella.getKernel().x;
+		y1 = cella1.getKernel().y;  
+		y2 = cella.getKernel().y;
 		dx = x2-x1;  
 		dy = y2-y1;
 
@@ -74,39 +64,33 @@ public class Frontiera
 			c2 = -b2*y1 - x1; 
 		}
 
-
-
-
-
-		double xm = (cella1.getKernel().getX() + cella.getKernel().getX()) / 2;
-		double ym = (cella1.getKernel().getY() + cella.getKernel().getY()) / 2;
+		float xm = (cella1.getKernel().x + cella.getKernel().x) / 2;
+		float ym = (cella1.getKernel().y + cella.getKernel().y) / 2;
 
 		a3 = b2;
 		b3 = -a2;       
 		c3 = -xm*a3 - ym*b3;
-
-
 
 		if(sonoUguali(a1*b3, a3*b1))
 		{
 			return null;
 		}
 
-		double denom = a1*b3 - b1*a3;
+		float denom = a1*b3 - b1*a3;
 
-		double y0 = (c1*a3 - c3*a1) / denom;
+		float y0 = (c1*a3 - c3*a1) / denom;
 
-		double x0 = (c3*b1 - c1*b3) / denom;
+		float x0 = (c3*b1 - c1*b3) / denom;
 
-		double xmax = Math.max(p1.getX(), p2.getX());
-		double xmin = Math.min(p1.getX(), p2.getX());
-		double ymax = Math.max(p1.getY(), p2.getY());
-		double ymin = Math.min(p1.getY(), p2.getY());
+		float xmax = Math.max(p1.x, p2.x);
+		float xmin = Math.min(p1.x, p2.x);
+		float ymax = Math.max(p1.y, p2.y);
+		float ymin = Math.min(p1.y, p2.y);
 
 		if((isMaggiorUguale(x0, xmin)) && (isMinorUguale(x0, xmax)) && 
 				(isMaggiorUguale(y0, ymin)) && (isMinorUguale(y0, ymax)))
 		{
-			return new Point2D.Double(x0, y0);
+			return new PointF(x0, y0);
 		}
 		else
 			return null;
@@ -116,35 +100,38 @@ public class Frontiera
 	public Cella getVicinoDi(Cella cella)
 	{
 		if(cella == cella1)
+		{
 			return cella2;
-		if(cella == cella2)
+		}
+		else if(cella == cella2)
+		{
 			return cella1;
+		}
+		
 		return null;
 	}
-
-
 
 	public boolean isEdge()
 	{
 		return (cella2 == null);
 	}
 
-	public Point2D.Double getPuntoUno()
+	public PointF getPuntoUno()
 	{
 		return p1;
 	}
 
-	public Point2D.Double getPuntoDue()
+	public PointF getPuntoDue()
 	{
 		return p2;
 	}
 
-	public void setPuntoUno(Point2D.Double punto)
+	public void setPuntoUno(PointF punto)
 	{
 		this.p1 = punto;
 	}
 
-	public void setPuntoDue(Point2D.Double punto)
+	public void setPuntoDue(PointF punto)
 	{
 		this.p2 = punto;
 	}
@@ -159,7 +146,7 @@ public class Frontiera
 		cella2 = sito;
 	}
 
-	public boolean isMinorUguale(double u, double d)
+	public boolean isMinorUguale(float u, float d)
 	{
 		if((u != 0) && (d != 0))
 		{
@@ -172,7 +159,7 @@ public class Frontiera
 	}
 
 
-	public boolean isMaggiorUguale(double u, double d)
+	public boolean isMaggiorUguale(float u, float d)
 	{
 		if((u != 0) && (d != 0))
 		{
@@ -184,7 +171,7 @@ public class Frontiera
 		}
 	}
 
-	public boolean sonoUguali(double num, double numero)
+	public boolean sonoUguali(float num, float numero)
 	{
 		if((num != 0) && (numero != 0))
 		{
@@ -197,7 +184,7 @@ public class Frontiera
 		}
 	}
 
-	private Point2D.Double p1, p2;
+	private PointF p1, p2;
 	private Cella cella1, cella2;
-	private static final double EPSILON = 1E-9;
+	private static final float EPSILON = 1F-9;
 }
