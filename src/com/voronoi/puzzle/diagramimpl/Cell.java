@@ -4,27 +4,27 @@ import java.util.*;
 
 import android.graphics.PointF;
 
-public class Cella implements Cloneable 
+public class Cell implements Cloneable 
 {
-	public  Cella(float x, float y)
+	public  Cell(float x, float y)
 	{
 		border = new ArrayList();
 		side = new PointF(x, y);
 	}
 
-	public  Cella(float x, float y, boolean col)
+	public  Cell(float x, float y, boolean col)
 	{
 		border = new ArrayList();
 		side = new PointF(x, y);
 		this.colore = col;
 	}
-	public Cella(PointF unPunto)
+	public Cell(PointF unPunto)
 	{
 		border = new ArrayList();
 		side = unPunto;
 	}
 
-	public Cella(PointF unPunto, boolean col)
+	public Cell(PointF unPunto, boolean col)
 	{
 		border = new ArrayList();
 		side = unPunto;
@@ -115,12 +115,12 @@ public class Cella implements Cloneable
 	
 	public ArrayList getVertexes()
 	{   
-		Frontiera front;
+		Border front;
 		ArrayList  listaPunti = new ArrayList ();
 		Iterator listaElementi = border.iterator();
 		while(listaElementi.hasNext())
 		{
-			front= (Frontiera)listaElementi.next();
+			front= (Border)listaElementi.next();
 			PointF puntoUno = front.getPuntoUno();
 			PointF puntoDue = front.getPuntoDue();
 
@@ -240,10 +240,10 @@ public class Cella implements Cloneable
 
 	public Object clone()
 	{
-		Cella clonata  = null;
+		Cell clonata  = null;
 		try
 		{
-			clonata = (Cella)super.clone();
+			clonata = (Cell)super.clone();
 			clonata.setColore(this.colore);
 		}
 		catch(CloneNotSupportedException e){e.printStackTrace();}

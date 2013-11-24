@@ -2,9 +2,9 @@ package com.voronoi.puzzle.diagramimpl;
 
 import android.graphics.PointF;
 
-public class Frontiera                                                                                                                                                                                                                                                                                                                           
+public class Border                                                                                                                                                                                                                                                                                                                           
 {
-	public Frontiera(Cella cellaUno, Cella cellaDue, PointF limit1, PointF limit2)
+	public Border(Cell cellaUno, Cell cellaDue, PointF limit1, PointF limit2)
 	{
 		this.cella1 = cellaUno;                                                                           
 		this.cella2 = cellaDue;
@@ -12,7 +12,7 @@ public class Frontiera
 		p2 = limit2;
 	} 
 
-	public PointF trovaIntersezione(Cella cella)
+	public PointF trovaIntersezione(Cell cella)
 	{
 		float a1, b1, c1;
 
@@ -97,7 +97,7 @@ public class Frontiera
 
 	} 
 
-	public Cella getVicinoDi(Cella cella)
+	public Cell getVicinoDi(Cell cella)
 	{
 		if(cella == cella1)
 		{
@@ -136,12 +136,12 @@ public class Frontiera
 		this.p2 = punto;
 	}
 
-	public void setCellaUno(Cella sito)
+	public void setCellaUno(Cell sito)
 	{
 		cella1 = sito;
 	}
 
-	public void setCellaDue(Cella sito)
+	public void setCellaDue(Cell sito)
 	{
 		cella2 = sito;
 	}
@@ -185,6 +185,6 @@ public class Frontiera
 	}
 
 	private PointF p1, p2;
-	private Cella cella1, cella2;
+	private Cell cella1, cella2;
 	private static final float EPSILON = 1F-9;
 }

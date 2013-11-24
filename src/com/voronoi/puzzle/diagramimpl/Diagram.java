@@ -11,9 +11,9 @@ import java.lang.Exception;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
-public class Diagramma 
+public class Diagram 
 {
-	public Diagramma(int sizeX, int sizeY)
+	public Diagram(int sizeX, int sizeY)
 	{
 		maxX = sizeX;
 		maxY = sizeY;
@@ -27,19 +27,19 @@ public class Diagramma
 		maxY = y;
 	}
 
-	public void aggiungiCellaRossa(Cella cella)
+	public void aggiungiCellaRossa(Cell cella)
 	{
 		cella.setColore(true);
 		aggiungiCella(cella);
 	}
 
-	public void aggiungiCellaBlu(Cella cella)
+	public void aggiungiCellaBlu(Cell cella)
 	{
 		cella.setColore(false);
 		aggiungiCella(cella);
 	}
 
-	public void aggiungiCella(Cella cella)
+	public void aggiungiCella(Cell cella)
 	{
 		Iterator listaCelle;
 		Iterator listaFrontiere;
@@ -50,8 +50,8 @@ public class Diagramma
 
 		Iterator listaFront;
 
-		Cella cella1, cella2, cellaFatta;
-		Frontiera front, front1, front2, front3, front4, newFront;
+		Cell cella1, cella2, cellaFatta;
+		Border front, front1, front2, front3, front4, newFront;
 		PointF punto1, punto2, punto3, punto, limit;
 
 		boolean loop = false; 
@@ -74,10 +74,10 @@ public class Diagramma
 			PointF p3 = new PointF(maxX, maxY);
 			PointF p4 = new PointF(0, maxY);
 
-			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p1, p4));
-			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p4, p3));
-			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p3, p2));
-			this.aggiungiFrontiera(cella,new Frontiera(cella, null, p2, p1));
+			this.aggiungiFrontiera(cella,new Border(cella, null, p1, p4));
+			this.aggiungiFrontiera(cella,new Border(cella, null, p4, p3));
+			this.aggiungiFrontiera(cella,new Border(cella, null, p3, p2));
+			this.aggiungiFrontiera(cella,new Border(cella, null, p2, p1));
 
 			return; 
 		}
@@ -87,14 +87,14 @@ public class Diagramma
 		while(listaCelle.hasNext())
 		{
 			// la cella sucessiva...cella1
-			cella1 = (Cella)listaCelle.next();
+			cella1 = (Cell)listaCelle.next();
 			doneFlag = false;
 
 
 			listaCelleFatte = celleFatte.iterator(); //inizzializzazione di listaCelleFatte
 			while(listaCelleFatte.hasNext()) 
 			{
-				cellaFatta = (Cella)listaCelleFatte.next();
+				cellaFatta = (Cell)listaCelleFatte.next();
 				if(cella1 == cellaFatta)
 				{
 					doneFlag = true;
@@ -110,7 +110,7 @@ public class Diagramma
 			listaFrontiere = cella1.getFrontiere();
 			while(listaFrontiere.hasNext())
 			{
-				front = (Frontiera)listaFrontiere.next();
+				front = (Border)listaFrontiere.next();
 				punto = front.trovaIntersezione(cella);
 
 				if(punto == null) continue;
@@ -139,7 +139,7 @@ public class Diagramma
 			}
 
 			// la nuova frontiera fra cella e cella1
-			newFront = new Frontiera(cella, cella1, punto1, punto2);
+			newFront = new Border(cella, cella1, punto1, punto2);
 			// per ogni frontiera trovata si aggiunge la nuova frontiera e il nuovo vicino
 			aggiungiFrontiera(cella, newFront);
 			aggiungiFrontiera(cella1, newFront); 
@@ -159,14 +159,14 @@ public class Diagramma
 
 			if(front1.isEdge())
 			{
-				aggiungiFrontiera(cella,new Frontiera(cella, null, punto1, limit));
+				aggiungiFrontiera(cella,new Border(cella, null, punto1, limit));
 			}
 
 			ArrayList oldFront = new ArrayList();
 			listaFrontiere = cella1.getFrontiere();
 			while(listaFrontiere.hasNext())
 			{
-				front = (Frontiera)listaFrontiere.next();
+				front = (Border)listaFrontiere.next();
 
 				if(front == front1) 
 					continue;
@@ -195,7 +195,7 @@ public class Diagramma
 			listaFrontiere = oldFront.iterator();
 			while(listaFrontiere.hasNext())
 			{
-				this.cancellaFrontiera(cella1,(Frontiera)listaFrontiere.next());
+				this.cancellaFrontiera(cella1,(Border)listaFrontiere.next());
 			}
 
 
@@ -211,7 +211,7 @@ public class Diagramma
 				listaFrontiere = cella1.getFrontiere();
 				while(listaFrontiere.hasNext())
 				{
-					front3 = (Frontiera)listaFrontiere.next();
+					front3 = (Border)listaFrontiere.next();
 					punto3 = front3.trovaIntersezione(cella);
 
 					if((punto3 != null) && (front3 != front1))
@@ -225,7 +225,7 @@ public class Diagramma
 					loop = true;
 				} 
 
-				newFront = new Frontiera(cella, cella1, punto1, punto3);
+				newFront = new Border(cella, cella1, punto1, punto3);
 				this.aggiungiFrontiera(cella, newFront);
 				this.aggiungiFrontiera(cella1, newFront);
 
@@ -244,13 +244,13 @@ public class Diagramma
 
 
 				if(front3.isEdge())
-					this.aggiungiFrontiera(cella, new Frontiera(cella, null, punto3, limit));
+					this.aggiungiFrontiera(cella, new Border(cella, null, punto3, limit));
 
 				oldFront.clear(); //Serve per reinizilizzare l'oldFront
 				listaFrontiere = cella1.getFrontiere();
 				while(listaFrontiere.hasNext())
 				{
-					front = (Frontiera)listaFrontiere.next();
+					front = (Border)listaFrontiere.next();
 					if(front == front1) 
 						continue;
 					if(front == front3) 
@@ -281,7 +281,7 @@ public class Diagramma
 				listaFrontiere = oldFront.iterator();
 				while(listaFrontiere.hasNext())
 				{
-					this.cancellaFrontiera(cella1, (Frontiera)listaFrontiere.next());
+					this.cancellaFrontiera(cella1, (Border)listaFrontiere.next());
 				}
 
 
@@ -312,7 +312,7 @@ public class Diagramma
 
 
 				if(front2.isEdge())
-					this.aggiungiFrontiera(cella, new Frontiera(cella, null, punto2, limit));
+					this.aggiungiFrontiera(cella, new Border(cella, null, punto2, limit));
 			}
 			if(!loop)
 			{
@@ -323,7 +323,7 @@ public class Diagramma
 					listaFrontiere = cella1.getFrontiere();
 					while(listaFrontiere.hasNext())
 					{
-						front3 = (Frontiera)listaFrontiere.next();
+						front3 = (Border)listaFrontiere.next();
 						punto3 = front3.trovaIntersezione(cella);
 
 						if((punto3 != null) && (front3 != front2))
@@ -345,7 +345,7 @@ public class Diagramma
 						throw new NullPointerException();
 					}
 
-					newFront = new Frontiera(cella, cella1, punto2, punto3);
+					newFront = new Border(cella, cella1, punto2, punto3);
 					this.aggiungiFrontiera(cella, newFront);
 					this.aggiungiFrontiera(cella1, newFront);
 
@@ -363,14 +363,14 @@ public class Diagramma
 
 
 					if(front3.isEdge())
-						aggiungiFrontiera(cella, new Frontiera(cella, null, punto3, limit));
+						aggiungiFrontiera(cella, new Border(cella, null, punto3, limit));
 
 					oldFront.clear();
 					listaFrontiere = cella1.getFrontiere();
 					while(listaFrontiere.hasNext())
 					{
 
-						front = (Frontiera)listaFrontiere.next();
+						front = (Border)listaFrontiere.next();
 						if(front == front2) 
 							continue;
 						if(front == front3) 
@@ -397,7 +397,7 @@ public class Diagramma
 					listaFront = oldFront.iterator();
 					while(listaFront.hasNext())
 					{
-						this.cancellaFrontiera(cella1, (Frontiera)listaFront.next());
+						this.cancellaFrontiera(cella1, (Border)listaFront.next());
 					}
 
 					celleFatte.add(cella1);
@@ -413,7 +413,7 @@ public class Diagramma
 			Iterator listaFrontiereCella = cella.getFrontiere();
 			while(listaFrontiereCella.hasNext())
 			{            
-				front = (Frontiera) listaFrontiereCella.next();
+				front = (Border) listaFrontiereCella.next();
 				if(isUguale(front.getPuntoUno().x, maxX) && 
 						isUguale(front.getPuntoDue().x, maxX))
 				{
@@ -584,7 +584,7 @@ public class Diagramma
 			listaFront = oldFront.iterator();
 			while(listaFront.hasNext())
 			{
-				front = (Frontiera) listaFront.next();
+				front = (Border) listaFront.next();
 				this.cancellaFrontiera(cella, front);
 			}
 
@@ -599,19 +599,19 @@ public class Diagramma
 	    return (float)Math.sqrt(a * a + b * b);
 	}
 
-	public boolean aggiungiFrontiera(Cella sito, Frontiera frontier)
+	public boolean aggiungiFrontiera(Cell sito, Border frontier)
 	{
-		Cella p = frontier.getVicinoDi(sito);
+		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().add(frontier);
 	}
 
-	public boolean cancellaFrontiera(Cella sito, Frontiera frontier)
+	public boolean cancellaFrontiera(Cell sito, Border frontier)
 	{
-		Cella p = frontier.getVicinoDi(sito);
+		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().remove(frontier);
 	}
 
-	public void cancellaCella(Cella sito)
+	public void cancellaCella(Cell sito)
 	{
 		if(sito == null) return;
 
@@ -623,7 +623,7 @@ public class Diagramma
 			Iterator listaTrasporto = trasporto.iterator();
 			while(listaTrasporto.hasNext())
 			{
-				Cella elementoCorrente = (Cella)listaTrasporto.next();
+				Cell elementoCorrente = (Cell)listaTrasporto.next();
 				elementoCorrente.getVfrontiere().clear();
 				aggiungiCella(elementoCorrente);
 			}
@@ -647,11 +647,11 @@ public class Diagramma
 	}
 
 
-	public Cella trovaSito(PointF unPunto)
+	public Cell trovaSito(PointF unPunto)
 	{
 		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
 		{
-			Cella currentSite = (Cella)listaSiti.next();
+			Cell currentSite = (Cell)listaSiti.next();
 			// Qua esiste un'inconsistenza con i pixel, non sempre!
 			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN / 2 - 0.1))            
 			{
@@ -661,12 +661,12 @@ public class Diagramma
 		return null;
 	}
 
-	public Cella siteIsDragged(PointF unPunto, double zom)
+	public Cell siteIsDragged(PointF unPunto, double zom)
 	{
-		Cella tempSito = null;
+		Cell tempSito = null;
 		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
 		{
-			Cella currentSite = (Cella)listaSiti.next();
+			Cell currentSite = (Cell)listaSiti.next();
 			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN * 30 / (zom * 0.6))) // Qua esiste un problema di tunning           
 			{
 				if(tempSito == null)
@@ -705,7 +705,7 @@ public class Diagramma
 	}
 
 
-	public void aggiungiCellaDragged(Cella sito)
+	public void aggiungiCellaDragged(Cell sito)
 	{
 		if(sito == null) return;
 
@@ -716,7 +716,7 @@ public class Diagramma
 		Iterator listaTrasporto = trasportoBis.iterator();
 		while(listaTrasporto.hasNext())
 		{
-			Cella elementoCorrente = (Cella)listaTrasporto.next();
+			Cell elementoCorrente = (Cell)listaTrasporto.next();
 			elementoCorrente.getVfrontiere().clear();
 			aggiungiCella(elementoCorrente);
 		}
@@ -730,7 +730,7 @@ public class Diagramma
 		Iterator listaCelle = celle.iterator();
 		while(listaCelle.hasNext())
 		{
-			Cella cella = (Cella)(listaCelle.next());
+			Cell cella = (Cell)(listaCelle.next());
 			PointF kernel = cella.getKernel();
 			double x = kernel.x;
 			double y = kernel.y;
@@ -753,7 +753,7 @@ public class Diagramma
 				float y = Float.parseFloat(divisore.nextToken());
 				boolean colore = (Boolean.valueOf(divisore.nextToken())).booleanValue();
 				PointF p = new PointF(x, y);
-				Cella cella = new Cella (p);
+				Cell cella = new Cell (p);
 				cella.setColore(colore);
 				this.aggiungiCella(cella);
 			}
@@ -770,7 +770,7 @@ public class Diagramma
 
 	public void cancellaArea(RectF unRettangolo, float zoom)
 	{
-		Cella cella = null;
+		Cell cella = null;
 		RectF rett = unRettangolo;
 		Iterator it = celle.iterator();
 		PointF punto;
@@ -778,7 +778,7 @@ public class Diagramma
 
 		while(it.hasNext())
 		{
-			cella = (Cella)it.next();
+			cella = (Cell)it.next();
 			float x = (cella.getKernel()).x * zoom;
 			float y = (cella.getKernel()).y * zoom;
 
@@ -790,7 +790,7 @@ public class Diagramma
 		
 		for(int k = 0; k < siti.size(); k++)
 		{
-			celle.remove((Cella)siti.get(k));
+			celle.remove((Cell)siti.get(k));
 		}
 
 		ArrayList trasporto = (ArrayList)celle.clone();
@@ -799,9 +799,9 @@ public class Diagramma
 		
 		while(listaTrasporto.hasNext())
 		{
-			Cella elementoCorrente = (Cella)listaTrasporto.next();
+			Cell elementoCorrente = (Cell)listaTrasporto.next();
 			punto = elementoCorrente.getKernel();
-			cella = new Cella(punto);
+			cella = new Cell(punto);
 			cella.setColore(elementoCorrente.getColore());
 			aggiungiCella(cella);
 		}
@@ -815,7 +815,7 @@ public class Diagramma
 		Iterator listaTrasporto = trasporto.iterator();
 		while(listaTrasporto.hasNext())
 		{
-			Cella elementoCorrente = (Cella)listaTrasporto.next();
+			Cell elementoCorrente = (Cell)listaTrasporto.next();
 			elementoCorrente.getVfrontiere().clear();
 			aggiungiCella(elementoCorrente);
 
