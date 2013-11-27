@@ -37,13 +37,18 @@ public class EditorView extends View
 		cellPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
 		kernelPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		quadPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
+		borderPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
 		cellPaint_.setColor( getResources().getColor(R.color.black) );
 		cellPaint_.setStrokeWidth( lineWidth_ );
+		cellPaint_.setStyle(Style.STROKE);
 		kernelPaint_.setColor( getResources().getColor(R.color.orange) );
 		kernelPaint_.setStyle(Style.FILL);
 		quadPaint_.setColor( getResources().getColor(R.color.white) );
 		quadPaint_.setStyle(Style.FILL);
+		borderPaint_.setColor( getResources().getColor(R.color.orange) );
+		borderPaint_.setStrokeWidth( 5 );
+		borderPaint_.setStyle(Style.STROKE);
 	}
 
 	@Override
@@ -65,12 +70,17 @@ public class EditorView extends View
 	{
 		super.onDraw(canvas);
 		
+		if( bgImg_ != null )
+		{
+			setBackgroundDrawable( bgImg_ );
+		}
+		
+		drawBorders(canvas);
+		
 		if(diagram_ == null)
 		{
 			return;
 		}
-		
-		setBackgroundDrawable( bgImg_ );
 
 		drawCells(canvas);
 
@@ -78,8 +88,6 @@ public class EditorView extends View
 		{
 			drawQuadrettiDragged(canvas);
 		}
-		
-		drawBorders(canvas);
 	}
 
 	@Override
@@ -91,12 +99,14 @@ public class EditorView extends View
 	public void SetDiagram( Diagram diagram )
 	{
 		diagram_ = diagram;
+		invalidate();
 	}
 
 	public void SetBackgroundImage( Uri imgUri ) throws FileNotFoundException
 	{
 		Bitmap bm = BitmapFactory.decodeStream( getContext().getContentResolver().openInputStream(imgUri) );
 		bgImg_ = new BitmapDrawable(getResources(), bm);
+		invalidate();
 	}
 
 	public void drawCells(Canvas canvas)
@@ -134,7 +144,7 @@ public class EditorView extends View
 		int height = getMeasuredHeight();
 		int width = getMeasuredWidth();
 		
-		canvas.drawRect( 0, 0, width-1, height-1, cellPaint_ );
+		canvas.drawRect( 0, 0, width-1, height-1, borderPaint_ );
 	}
 
 
@@ -208,4 +218,5 @@ public class EditorView extends View
 	Paint cellPaint_;
 	Paint kernelPaint_;
 	Paint quadPaint_;
+	Paint borderPaint_;
 }

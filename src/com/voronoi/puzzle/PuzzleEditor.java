@@ -1,6 +1,7 @@
 package com.voronoi.puzzle;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,11 +38,14 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	private MediaScannerConnection conn;
 	private Uri imgUri_, uriWorkaround_;
 	private File fileSelectedInPreviewer_;
+	
+	private static EditorView editor_;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_puzzle_editor);
+		editor_ = (EditorView)findViewById(R.id.editorView);
 	}
 
 	@Override
@@ -54,6 +58,12 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	public void setImageUri( Uri uri )
 	{
 		imgUri_ = uri;
+		try {
+			editor_.SetBackgroundImage( uri );
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public void loadImage(View view) 
 	{
