@@ -74,14 +74,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:text="ToggleButton" />
+            android:onClick="SetCellsDragable" />
         
         <ToggleButton
             android:id="@+id/enableEraserBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="ToggleButton" />
+            android:onClick="SetCellsEraseable" />
+        
     </LinearLayout>
     
     <com.voronoi.puzzle.EditorView

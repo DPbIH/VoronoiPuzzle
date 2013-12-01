@@ -6,12 +6,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.media.MediaScannerConnection;
-import android.media.MediaScannerConnection.MediaScannerConnectionClient;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,12 +15,17 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ToggleButton;
 
 public class PuzzleEditor extends Activity implements MediaScannerConnectionClient 
 {
@@ -42,7 +41,8 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	private static EditorView editor_;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_puzzle_editor);
 		editor_ = (EditorView)findViewById(R.id.editorView);
@@ -76,6 +76,31 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		Intent intent = new Intent(this, GamePlay.class);
 		startActivity(intent);
 	}
+	
+	public void SetCellsEraseable(View view) 
+	{
+	    boolean on = ((ToggleButton)view).isChecked();
+	    if(on)
+	    {
+	    	ToggleButton dragBtn = (ToggleButton)findViewById(R.id.enableDragBtn);
+	    	dragBtn.setChecked(false);
+	    }
+	    
+	    editor_.setEraserEnabled(on);
+	}
+	
+	public void SetCellsDragable(View view) 
+	{
+	    boolean on = ((ToggleButton)view).isChecked();
+	    if(on)
+	    {
+	    	ToggleButton eraserBtn = (ToggleButton)findViewById(R.id.enableEraserBtn);
+	    	eraserBtn.setChecked(false);
+	    }
+	    
+	    editor_.setDraggingEnabled(on);
+	}
+
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  
