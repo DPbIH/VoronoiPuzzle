@@ -12,7 +12,7 @@ public class Border
 		p2 = limit2;
 	} 
 
-	public PointF trovaIntersezione(Cell cella)
+	public PointF GetIntersection(Cell cella)
 	{
 		float a1, b1, c1;
 
@@ -94,7 +94,6 @@ public class Border
 		}
 		else
 			return null;
-
 	} 
 
 	public Cell getVicinoDi(Cell cella)
@@ -186,5 +185,5 @@ public class Border
 
 	private PointF p1, p2;
 	private Cell cella1, cella2;
-	private static final float EPSILON = 1F-9;
+	private static final double EPSILON = 1E-9;
 }

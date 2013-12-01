@@ -6,13 +6,11 @@ import java.util.Iterator;
 
 import com.voronoi.puzzle.diagramimpl.Cell;
 import com.voronoi.puzzle.diagramimpl.Diagram;
-import com.voronoi.puzzle.diagramimpl.Border;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
@@ -34,15 +32,24 @@ public class EditorView extends View
 	
 	private void init()
 	{
+		initDiagram();
+		initPaints();
+	}
+
+	private void initDiagram() {
+		diagram_ = new Diagram( this.getWidth(), this.getHeight() );
+	}
+
+	private void initPaints() {
 		cellPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
 		kernelPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		quadPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
-		cellPaint_.setColor( getResources().getColor(R.color.black) );
+		cellPaint_.setColor( getResources().getColor(R.color.orange) );
 		cellPaint_.setStrokeWidth( lineWidth_ );
 		cellPaint_.setStyle(Style.STROKE);
-		kernelPaint_.setColor( getResources().getColor(R.color.orange) );
+		kernelPaint_.setColor( getResources().getColor(R.color.white) );
 		kernelPaint_.setStyle(Style.FILL);
 		quadPaint_.setColor( getResources().getColor(R.color.white) );
 		quadPaint_.setStyle(Style.FILL);
@@ -58,10 +65,11 @@ public class EditorView extends View
 		int measuredHeight = MeasureSpec.getSize(heightSpec);
 
 		setMeasuredDimension( measuredWidth, measuredHeight);
-		
-		/*if(diagram_ == null) return new Dimension(600, 600);
-		Dimension dim = diagram_.getSize();
-		return new Dimension((int)(dim.getWidth()* zoom), (int)(dim.getHeight()* zoom));*/
+	}
+	
+	protected void onSizeChanged (int w, int h, int oldw, int oldh)
+	{
+		diagram_.setDiagramSize(w, h);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -83,18 +91,111 @@ public class EditorView extends View
 		}
 
 		drawCells(canvas);
-
-		if(draggingEnabled_)
-		{
-			drawQuadrettiDragged(canvas);
-		}
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) 
 	{
-		return super.onTouchEvent(event);
+		int eventaction = event.getAction();
+
+		switch (eventaction) {
+		case MotionEvent.ACTION_DOWN: 
+			// finger touches the screen
+			onTouchPressed(event);
+			break;
+
+		case MotionEvent.ACTION_MOVE:
+			// finger moves on the screen
+			onTouchDragged(event);
+			break;
+
+		case MotionEvent.ACTION_UP:   
+			// finger leaves the screen
+			onTouchReleased(event);
+			break;
+		}
+
+		return true; 
 	}
+	
+	public void onTouchPressed(MotionEvent event)
+	{
+		if( isEraserEnabled() )
+		{
+			return;
+		}
+		
+		float x = event.getX();
+		float y = event.getY();
+		
+		selectedCell_ = diagram_.getCellByCoordinates( new PointF(x, y) );
+
+		if( selectedCell_ == null && ( ! draggingEnabled_ ) )
+		{
+			Cell newCell = new Cell( x, y );
+			addCell( newCell );
+		}
+		
+		invalidate();
+	}
+
+
+	public void onTouchDragged(MotionEvent event)
+	{
+		if( isEraserEnabled() )
+		{
+			return;
+		}
+		
+		float x 		= event.getX();
+		float y 		= event.getY();
+
+		int indiceCella = 0;
+		
+		if(draggedCell_ == null)
+		{
+			draggedCell_ = diagram_.selectCellForDragging( new PointF(x, y) );
+			if(draggedCell_ == null)
+			{
+				setDraggingEnabled(false);
+				return;
+			}
+		}
+		else
+		{
+			diagram_.deleteCell( draggedCell_ );
+			draggedCell_ = new Cell( x, y );
+			
+			Cell cell = diagram_.getCellByCoordinates( new PointF(x, y) );
+			if( cell == null )
+			{
+				diagram_.addDraggedCell( draggedCell_ );
+			}
+
+			invalidate();
+		}
+
+	}
+
+	public void onTouchReleased(MotionEvent event)
+	{
+		if( isEraserEnabled() )
+		{
+			selectedCell_ = diagram_.selectCellForDragging( new PointF( event.getX(), event.getY() ) );
+
+			if( selectedCell_ != null )
+			{
+				diagram_.deleteCell(selectedCell_);
+			}
+		}
+		else
+		{
+			draggedCell_ = null;
+		}
+
+		invalidate();
+	}
+
 	
 	public void SetDiagram( Diagram diagram )
 	{
@@ -108,11 +209,18 @@ public class EditorView extends View
 		bgImg_ = new BitmapDrawable(getResources(), bm);
 		invalidate();
 	}
+	
+	public void resetView()
+	{
+		diagram_.clear();
+		bgImg_ = null;
+		invalidate();
+	}
 
 	public void drawCells(Canvas canvas)
 	{
-		Iterator<Cell> cellsIter = (Iterator<Cell>)diagram_.getCelle();
-		while(cellsIter.hasNext())
+		Iterator<Cell> cellsIter = (Iterator<Cell>)diagram_.getCellIterator();
+		while( cellsIter.hasNext() )
 		{
 			Cell cell;
 			ArrayList<PointF> vertexes;
@@ -135,7 +243,25 @@ public class EditorView extends View
 				canvas.drawPath( path, cellPaint_ );
 			}
 
-			canvas.drawCircle( cell.getKernel().x, cell.getKernel().y, radius_, kernelPaint_ );
+			DrawCellKernel(canvas, cell);
+		}
+	}
+
+	private void DrawCellKernel(Canvas canvas, Cell cell) 
+	{
+		if( ! draggingEnabled_ )
+		{
+			canvas.drawCircle( 
+					cell.getKernel().x, cell.getKernel().y, radius_,
+					kernelPaint_ );
+		}
+		else
+		{
+			RectF rect = new RectF( 
+					cell.getKernel().x - radius_, cell.getKernel().x - radius_,
+					cell.getKernel().x + radius_, cell.getKernel().x + radius_);
+			
+			canvas.drawRect( rect, quadPaint_ );
 		}
 	}
 
@@ -147,76 +273,46 @@ public class EditorView extends View
 		canvas.drawRect( 0, 0, width-1, height-1, borderPaint_ );
 	}
 
-
-	public void drawQuadrettiDragged(Canvas canvas)
-	{
-		canvas.drawRect( quad_, quadPaint_ );
-	}
-
-	public void setAreaCancellabile(boolean on)
+	public void setEraserEnabled(boolean on)
 	{
 		eraserEnabled_ = on;
 	}
-	public boolean getAreaCancellabile()
+	public boolean isEraserEnabled()
 	{
 		return eraserEnabled_;
 	}
-	public void setP(PointF punto)
-	{
-		p = punto;
-	}
 
-	public void setQ(PointF punto)
-	{
-		q = punto;
-	}
-	public PointF getP()
-	{
-		return p;
-	}
-	public RectF getRect()
-	{
-		return rect;
-	}
-	public void setRect(RectF rec)
-	{
-		rect = rec;
-	}
-
-	public void setQuad(RectF unRettDrag)
-	{
-		quad_ = unRettDrag;
-	}
-	public RectF getQuad()
-	{
-		return quad_;
-	}
-	public void setDragged(boolean on)
+	public void setDraggingEnabled(boolean on)
 	{
 		draggingEnabled_ = on;
 	}
-	public boolean getDragged()
+	
+	public boolean isDraggingEnabled()
 	{
 		return draggingEnabled_;
 	}
+	
+	public void addCell(Cell newCell)
+	{
+		Cell cell = newCell;
+		diagram_.addCell(cell);
+	}
 
-	private Diagram diagram_;  
+	private Diagram 		diagram_;
+	private BitmapDrawable 	bgImg_;
+	
+	private int radius_   				= 5;
+	private int lineWidth_ 				= 3;
 
-	private PointF p;
-	private PointF q;
-	private RectF quad_;
-
-	private RectF rect;
-	private int radius_    = 3;
-	private int lineWidth_ = 2;
-
-	private boolean eraserEnabled_   = false;
-	private boolean draggingEnabled_ = false;
-
-	private BitmapDrawable bgImg_;
+	private boolean eraserEnabled_   	= false;
+	private boolean draggingEnabled_ 	= false;
+	
+	private Cell selectedCell_ 			= null;
+	private Cell draggedCell_  			= null;
 	
 	Paint cellPaint_;
 	Paint kernelPaint_;
 	Paint quadPaint_;
 	Paint borderPaint_;
+	
 }

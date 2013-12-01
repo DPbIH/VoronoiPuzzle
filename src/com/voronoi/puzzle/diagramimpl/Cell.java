@@ -11,13 +11,7 @@ public class Cell implements Cloneable
 		border = new ArrayList();
 		side = new PointF(x, y);
 	}
-
-	public  Cell(float x, float y, boolean col)
-	{
-		border = new ArrayList();
-		side = new PointF(x, y);
-		this.colore = col;
-	}
+	
 	public Cell(PointF unPunto)
 	{
 		border = new ArrayList();
@@ -184,7 +178,7 @@ public class Cell implements Cloneable
 		return  border;
 	}
 
-	public Iterator getFrontiere()
+	public Iterator getBordersIt()
 	{
 		return border.iterator();
 	}
@@ -255,6 +249,6 @@ public class Cell implements Cloneable
 
 	private ArrayList border;
 	private PointF side;
-	private static final float EPS = 1F-13;
+	private static final double EPS = 1E-13;
 	private boolean colore = false;
 }

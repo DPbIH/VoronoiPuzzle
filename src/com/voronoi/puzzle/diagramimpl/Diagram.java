@@ -17,7 +17,7 @@ public class Diagram
 	{
 		maxX = sizeX;
 		maxY = sizeY;
-		celle = new ArrayList();
+		cellsList_ = new ArrayList();
 	}
 
 	public void setDiagramSize(int x, int y)
@@ -27,75 +27,62 @@ public class Diagram
 		maxY = y;
 	}
 
-	public void aggiungiCellaRossa(Cell cella)
+	public void addCell(Cell newCell)
 	{
-		cella.setColore(true);
-		aggiungiCella(cella);
-	}
-
-	public void aggiungiCellaBlu(Cell cella)
-	{
-		cella.setColore(false);
-		aggiungiCella(cella);
-	}
-
-	public void aggiungiCella(Cell cella)
-	{
-		Iterator listaCelle;
-		Iterator listaFrontiere;
+		Iterator cellsIt;
+		Iterator bordersIt;
 		yyy = 0;
 
-		ArrayList celleFatte = new ArrayList(); 
-		Iterator listaCelleFatte;
+		ArrayList madeCells = new ArrayList(); 
+		Iterator madeCellsIt;
 
 		Iterator listaFront;
 
-		Cell cella1, cella2, cellaFatta;
-		Border front, front1, front2, front3, front4, newFront;
-		PointF punto1, punto2, punto3, punto, limit;
+		Cell nextCell, cell2, madeCell;
+		Border border, border1, border2, border3, border4, newBorder;
+		PointF point1, point2, point3, point, limit;
 
 		boolean loop = false; 
 		boolean doneFlag = false;
 
-		front1 = front2 = front3 = front4 = front = null;
-		punto1 = punto2 = punto3 = null;
-		cella1 = cella2 = null;
+		border1 = border2 = border3 = border4 = border = null;
+		point1 = point2 = point3 = null;
+		nextCell = cell2 = null;
 
-		if(trovaSito(cella.getKernel()) != null)
+		if(getCellByCoordinates(newCell.getKernel()) != null)
 		{
 			return;
 		}
 
-		celle.add(cella);
-		if(celle.size() == 1)
+		cellsList_.add(newCell);
+		if(cellsList_.size() == 1)
 		{
 			PointF p1 = new PointF(0, 0);
 			PointF p2 = new PointF(maxX, 0);
 			PointF p3 = new PointF(maxX, maxY);
 			PointF p4 = new PointF(0, maxY);
 
-			this.aggiungiFrontiera(cella,new Border(cella, null, p1, p4));
-			this.aggiungiFrontiera(cella,new Border(cella, null, p4, p3));
-			this.aggiungiFrontiera(cella,new Border(cella, null, p3, p2));
-			this.aggiungiFrontiera(cella,new Border(cella, null, p2, p1));
+			this.addBorder(newCell,new Border(newCell, null, p1, p4));
+			this.addBorder(newCell,new Border(newCell, null, p4, p3));
+			this.addBorder(newCell,new Border(newCell, null, p3, p2));
+			this.addBorder(newCell,new Border(newCell, null, p2, p1));
 
 			return; 
 		}
 
 
-		listaCelle = celle.iterator(); //reinizializzazione della listaCelle 
-		while(listaCelle.hasNext())
+		cellsIt = cellsList_.iterator();
+		while(cellsIt.hasNext())
 		{
-			// la cella sucessiva...cella1
-			cella1 = (Cell)listaCelle.next();
 			doneFlag = false;
+			
+			nextCell = (Cell)cellsIt.next();
 
-
-			listaCelleFatte = celleFatte.iterator(); //inizzializzazione di listaCelleFatte
-			while(listaCelleFatte.hasNext()) 
+			madeCellsIt = madeCells.iterator();
+			while(madeCellsIt.hasNext()) 
 			{
-				cellaFatta = (Cell)listaCelleFatte.next();
-				if(cella1 == cellaFatta)
+				madeCell = (Cell)madeCellsIt.next();
+				if(nextCell == madeCell)
 				{
 					doneFlag = true;
 					break;
@@ -103,88 +90,91 @@ public class Diagram
 
 			}
 
-			if(doneFlag) continue;
-
-			//Per le altre celle  continua con le istruzioni:
-			front1 = front2 = null;
-			listaFrontiere = cella1.getFrontiere();
-			while(listaFrontiere.hasNext())
+			if(doneFlag)
 			{
-				front = (Border)listaFrontiere.next();
-				punto = front.trovaIntersezione(cella);
+				continue;
+			}
 
-				if(punto == null) continue;
+			border1 = border2 = null;
+			bordersIt = nextCell.getBordersIt();
+			while(bordersIt.hasNext())
+			{
+				border = (Border)bordersIt.next();
+				point = border.GetIntersection(newCell);
 
-				//if(punto != null)
-					//{
-					if(front1 == null)
-					{
-						front1 = front;
-						punto1 = punto;
-					}
-					else
-					{
-						front2 = front;
-						punto2 = punto;
-						break;
-					}
-					//}
+				if(point == null)
+				{
+					continue;
+				}
+
+				if(border1 == null)
+				{
+					border1 = border;
+					point1 = point;
+				}
+				else
+				{
+					border2 = border;
+					point2 = point;
+					break;
+				}
+
 			} 
 
 
 			// Serve per scorrere nella listaCelle
-			if((front1 == null) || (front2 == null))
+			if((border1 == null) || (border2 == null))
 			{
 				continue;
 			}
 
 			// la nuova frontiera fra cella e cella1
-			newFront = new Border(cella, cella1, punto1, punto2);
+			newBorder = new Border(newCell, nextCell, point1, point2);
 			// per ogni frontiera trovata si aggiunge la nuova frontiera e il nuovo vicino
-			aggiungiFrontiera(cella, newFront);
-			aggiungiFrontiera(cella1, newFront); 
+			addBorder(newCell, newBorder);
+			addBorder(nextCell, newBorder); 
 
 
-			if( GetDistance( cella1.getKernel(), front1.getPuntoUno() ) < 
-					GetDistance( cella.getKernel(), front1.getPuntoUno() ) )
+			if( GetDistance( nextCell.getKernel(), border1.getPuntoUno() ) < 
+					GetDistance( newCell.getKernel(), border1.getPuntoUno() ) )
 			{
-				limit = front1.getPuntoDue();
-				front1.setPuntoDue(punto1);
+				limit = border1.getPuntoDue();
+				border1.setPuntoDue(point1);
 			}
 			else
 			{
-				limit = front1.getPuntoUno();
-				front1.setPuntoUno(punto1);
+				limit = border1.getPuntoUno();
+				border1.setPuntoUno(point1);
 			}
 
-			if(front1.isEdge())
+			if(border1.isEdge())
 			{
-				aggiungiFrontiera(cella,new Border(cella, null, punto1, limit));
+				addBorder(newCell,new Border(newCell, null, point1, limit));
 			}
 
 			ArrayList oldFront = new ArrayList();
-			listaFrontiere = cella1.getFrontiere();
-			while(listaFrontiere.hasNext())
+			bordersIt = nextCell.getBordersIt();
+			while(bordersIt.hasNext())
 			{
-				front = (Border)listaFrontiere.next();
+				border = (Border)bordersIt.next();
 
-				if(front == front1) 
+				if(border == border1) 
 					continue;
-				if(front == front2) 
+				if(border == border2) 
 					continue;
-				if(front == newFront) 
+				if(border == newBorder) 
 					continue;
 
 				// Scorre sui punti frontiera della cella e verifica
 				// se sono stati aggiornati, eventualmente gli elimina.
-				if( GetDistance( front.getPuntoUno(), cella.getKernel() ) <
-						GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
+				if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) <
+						GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
 				{
-					oldFront.add(front);
-					if(front.isEdge())
+					oldFront.add(border);
+					if(border.isEdge())
 					{
-						aggiungiFrontiera(cella,front);
-						front.setCellaUno(cella);
+						addBorder(newCell,border);
+						border.setCellaUno(newCell);
 					}
 
 
@@ -192,70 +182,70 @@ public class Diagram
 			}
 
 
-			listaFrontiere = oldFront.iterator();
-			while(listaFrontiere.hasNext())
+			bordersIt = oldFront.iterator();
+			while(bordersIt.hasNext())
 			{
-				this.cancellaFrontiera(cella1,(Border)listaFrontiere.next());
+				this.deleteBorder(nextCell,(Border)bordersIt.next());
 			}
 
 
-			cella2 = cella1; //conserva il riferimento alla prima cella visionata
-			celleFatte.add(cella1);
+			cell2 = nextCell; //conserva il riferimento alla prima cella visionata
+			madeCells.add(nextCell);
 
 			//Trova uno delle frontiere della cella sucessiva che
 			//non sia però quella comune alla cella precedente(cella1)
-			while((!(front1.isEdge())) && (!loop))
+			while((!(border1.isEdge())) && (!loop))
 			{
-				cella1 = front1.getVicinoDi(cella1);
+				nextCell = border1.getVicinoDi(nextCell);
 
-				listaFrontiere = cella1.getFrontiere();
-				while(listaFrontiere.hasNext())
+				bordersIt = nextCell.getBordersIt();
+				while(bordersIt.hasNext())
 				{
-					front3 = (Border)listaFrontiere.next();
-					punto3 = front3.trovaIntersezione(cella);
+					border3 = (Border)bordersIt.next();
+					point3 = border3.GetIntersection(newCell);
 
-					if((punto3 != null) && (front3 != front1))
+					if((point3 != null) && (border3 != border1))
 						break;
 				}
 
 
-				if(front3 == front2)
+				if(border3 == border2)
 				{
-					punto3 = punto2;
+					point3 = point2;
 					loop = true;
 				} 
 
-				newFront = new Border(cella, cella1, punto1, punto3);
-				this.aggiungiFrontiera(cella, newFront);
-				this.aggiungiFrontiera(cella1, newFront);
+				newBorder = new Border(newCell, nextCell, point1, point3);
+				this.addBorder(newCell, newBorder);
+				this.addBorder(nextCell, newBorder);
 
-				if( GetDistance( cella1.getKernel(), front3.getPuntoUno() ) < 
-						GetDistance( cella.getKernel(), front3.getPuntoUno() ) )
+				if( GetDistance( nextCell.getKernel(), border3.getPuntoUno() ) < 
+						GetDistance( newCell.getKernel(), border3.getPuntoUno() ) )
 				{
-					limit = front3.getPuntoDue();
-					front3.setPuntoDue(punto3);
+					limit = border3.getPuntoDue();
+					border3.setPuntoDue(point3);
 				}
 				else
 				{
-					limit = front3.getPuntoUno();
-					front3.setPuntoUno(punto3);
+					limit = border3.getPuntoUno();
+					border3.setPuntoUno(point3);
 				}
 
 
 
-				if(front3.isEdge())
-					this.aggiungiFrontiera(cella, new Border(cella, null, punto3, limit));
+				if(border3.isEdge())
+					this.addBorder(newCell, new Border(newCell, null, point3, limit));
 
 				oldFront.clear(); //Serve per reinizilizzare l'oldFront
-				listaFrontiere = cella1.getFrontiere();
-				while(listaFrontiere.hasNext())
+				bordersIt = nextCell.getBordersIt();
+				while(bordersIt.hasNext())
 				{
-					front = (Border)listaFrontiere.next();
-					if(front == front1) 
+					border = (Border)bordersIt.next();
+					if(border == border1) 
 						continue;
-					if(front == front3) 
+					if(border == border3) 
 						continue;
-					if(front == newFront) 
+					if(border == newBorder) 
 						continue;
 
 					// Controllo sui punti consecutivi dello scheletro della
@@ -263,76 +253,76 @@ public class Diagram
 					// vicino alla nuova cella(quella entrante o corrente) che
 					// alla cella alla quale appartenevano  vuol dire che non le 
 					// appartengono più!
-					if( GetDistance( front.getPuntoUno(), cella.getKernel() ) < 
-							GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
+					if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) < 
+							GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
 					{
-						oldFront.add(front);
+						oldFront.add(border);
 
-						if(front.isEdge())
+						if(border.isEdge())
 						{
-							this.aggiungiFrontiera(cella, front);
-							front.setCellaUno(cella);
+							this.addBorder(newCell, border);
+							border.setCellaUno(newCell);
 						}
 
 					}
 				}
 
 
-				listaFrontiere = oldFront.iterator();
-				while(listaFrontiere.hasNext())
+				bordersIt = oldFront.iterator();
+				while(bordersIt.hasNext())
 				{
-					this.cancellaFrontiera(cella1, (Border)listaFrontiere.next());
+					this.deleteBorder(nextCell, (Border)bordersIt.next());
 				}
 
 
 
-				front1 = front3;
-				punto1 = punto3;
-				celleFatte.add(cella1);
+				border1 = border3;
+				point1 = point3;
+				madeCells.add(nextCell);
 
 			} 
 
 
 
-			cella1 = cella2;
+			nextCell = cell2;
 			if(!loop)
 			{
-				if( GetDistance( cella1.getKernel(), front2.getPuntoUno() ) <
-						GetDistance( cella.getKernel(), front2.getPuntoUno() ) )
+				if( GetDistance( nextCell.getKernel(), border2.getPuntoUno() ) <
+						GetDistance( newCell.getKernel(), border2.getPuntoUno() ) )
 				{
-					limit = front2.getPuntoDue();
-					front2.setPuntoDue(punto2);
+					limit = border2.getPuntoDue();
+					border2.setPuntoDue(point2);
 				}
 				else
 				{
-					limit = front2.getPuntoUno();
-					front2.setPuntoUno(punto2);
+					limit = border2.getPuntoUno();
+					border2.setPuntoUno(point2);
 				}
 
 
 
-				if(front2.isEdge())
-					this.aggiungiFrontiera(cella, new Border(cella, null, punto2, limit));
+				if(border2.isEdge())
+					this.addBorder(newCell, new Border(newCell, null, point2, limit));
 			}
 			if(!loop)
 			{
 
-				while((!front2.isEdge()))
+				while((!border2.isEdge()))
 				{
-					cella1 = front2.getVicinoDi(cella1);       
-					listaFrontiere = cella1.getFrontiere();
-					while(listaFrontiere.hasNext())
+					nextCell = border2.getVicinoDi(nextCell);       
+					bordersIt = nextCell.getBordersIt();
+					while(bordersIt.hasNext())
 					{
-						front3 = (Border)listaFrontiere.next();
-						punto3 = front3.trovaIntersezione(cella);
+						border3 = (Border)bordersIt.next();
+						point3 = border3.GetIntersection(newCell);
 
-						if((punto3 != null) && (front3 != front2))
+						if((point3 != null) && (border3 != border2))
 							break;
 					}
 
 
 
-					if(front3 == front1)
+					if(border3 == border1)
 					{
 						throw new NullPointerException();
 					}
@@ -345,49 +335,49 @@ public class Diagram
 						throw new NullPointerException();
 					}
 
-					newFront = new Border(cella, cella1, punto2, punto3);
-					this.aggiungiFrontiera(cella, newFront);
-					this.aggiungiFrontiera(cella1, newFront);
+					newBorder = new Border(newCell, nextCell, point2, point3);
+					this.addBorder(newCell, newBorder);
+					this.addBorder(nextCell, newBorder);
 
-					if( GetDistance( cella1.getKernel(), front3.getPuntoUno() ) < 
-							GetDistance( cella.getKernel(), front3.getPuntoUno() ) )
+					if( GetDistance( nextCell.getKernel(), border3.getPuntoUno() ) < 
+							GetDistance( newCell.getKernel(), border3.getPuntoUno() ) )
 					{
-						limit = front3.getPuntoDue();
-						front3.setPuntoDue(punto3);
+						limit = border3.getPuntoDue();
+						border3.setPuntoDue(point3);
 					}
 					else
 					{
-						limit = front3.getPuntoUno();
-						front3.setPuntoUno(punto3);
+						limit = border3.getPuntoUno();
+						border3.setPuntoUno(point3);
 					}
 
 
-					if(front3.isEdge())
-						aggiungiFrontiera(cella, new Border(cella, null, punto3, limit));
+					if(border3.isEdge())
+						addBorder(newCell, new Border(newCell, null, point3, limit));
 
 					oldFront.clear();
-					listaFrontiere = cella1.getFrontiere();
-					while(listaFrontiere.hasNext())
+					bordersIt = nextCell.getBordersIt();
+					while(bordersIt.hasNext())
 					{
 
-						front = (Border)listaFrontiere.next();
-						if(front == front2) 
+						border = (Border)bordersIt.next();
+						if(border == border2) 
 							continue;
-						if(front == front3) 
+						if(border == border3) 
 							continue;
-						if(front == newFront) 
+						if(border == newBorder) 
 							continue;
 
 
-						if( GetDistance( front.getPuntoUno(), cella.getKernel() ) < 
-								GetDistance( front.getPuntoUno(), cella1.getKernel() ) )
+						if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) < 
+								GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
 						{
-							oldFront.add(front);
+							oldFront.add(border);
 
-							if(front.isEdge())
+							if(border.isEdge())
 							{
-								this.aggiungiFrontiera(cella, front);
-								front.setCellaUno(cella);
+								this.addBorder(newCell, border);
+								border.setCellaUno(newCell);
 							}
 
 						}
@@ -397,12 +387,12 @@ public class Diagram
 					listaFront = oldFront.iterator();
 					while(listaFront.hasNext())
 					{
-						this.cancellaFrontiera(cella1, (Border)listaFront.next());
+						this.deleteBorder(nextCell, (Border)listaFront.next());
 					}
 
-					celleFatte.add(cella1);
-					front2 = front3;
-					punto2 = punto3;
+					madeCells.add(nextCell);
+					border2 = border3;
+					point2 = point3;
 
 				} 
 			}
@@ -410,170 +400,170 @@ public class Diagram
 			oldFront.clear();
 			boolean edge1 = false, edge2 = false, edge3 = false, edge4 = false;
 
-			Iterator listaFrontiereCella = cella.getFrontiere();
+			Iterator listaFrontiereCella = newCell.getBordersIt();
 			while(listaFrontiereCella.hasNext())
 			{            
-				front = (Border) listaFrontiereCella.next();
-				if(isUguale(front.getPuntoUno().x, maxX) && 
-						isUguale(front.getPuntoDue().x, maxX))
+				border = (Border) listaFrontiereCella.next();
+				if(isEqual(border.getPuntoUno().x, maxX) && 
+						isEqual(border.getPuntoDue().x, maxX))
 				{
 					if(edge2)
 					{
-						punto1 = front2.getPuntoUno();
-						punto2 = front2.getPuntoUno();
+						point1 = border2.getPuntoUno();
+						point2 = border2.getPuntoUno();
 
-						if(punto1.y < front2.getPuntoDue().y)
-							punto1 = front2.getPuntoDue();
+						if(point1.y < border2.getPuntoDue().y)
+							point1 = border2.getPuntoDue();
 
-						if(punto2.y > front2.getPuntoDue().y) 
-							punto2 = front2.getPuntoDue();
+						if(point2.y > border2.getPuntoDue().y) 
+							point2 = border2.getPuntoDue();
 
-						if(punto1.y < front.getPuntoUno().y) 
-							punto1 = front.getPuntoUno();
+						if(point1.y < border.getPuntoUno().y) 
+							point1 = border.getPuntoUno();
 
-						if(punto2.y > front.getPuntoUno().y) 
-							punto2 = front.getPuntoUno();
+						if(point2.y > border.getPuntoUno().y) 
+							point2 = border.getPuntoUno();
 
-						if(punto1.y < front.getPuntoDue().y)
-							punto1 = front.getPuntoDue();
+						if(point1.y < border.getPuntoDue().y)
+							point1 = border.getPuntoDue();
 
-						if(punto2.y > front.getPuntoDue().y) 
-							punto2 = front.getPuntoDue();
+						if(point2.y > border.getPuntoDue().y) 
+							point2 = border.getPuntoDue();
 
 
-						front.setPuntoUno(punto1);
-						front.setPuntoDue(punto2);
+						border.setPuntoUno(point1);
+						border.setPuntoDue(point2);
 
-						oldFront.add(front2);
-						front2 = front;
+						oldFront.add(border2);
+						border2 = border;
 					}
 					else
 					{
 						edge2 = true;
-						front2 = front;
+						border2 = border;
 					}
 				} 
 
-				if(isUguale(front.getPuntoUno().x, 0) &&
-						isUguale(front.getPuntoDue().x, 0))
+				if(isEqual(border.getPuntoUno().x, 0) &&
+						isEqual(border.getPuntoDue().x, 0))
 				{
 					if(edge4)
 					{
-						punto1 = front4.getPuntoUno();
-						punto2 = front4.getPuntoUno();
+						point1 = border4.getPuntoUno();
+						point2 = border4.getPuntoUno();
 
 
-						if(punto1.y < front4.getPuntoDue().y)
-							punto1 = front4.getPuntoDue();
+						if(point1.y < border4.getPuntoDue().y)
+							point1 = border4.getPuntoDue();
 
-						if(punto2.y > front4.getPuntoDue().y) 
-							punto2 = front4.getPuntoDue();
+						if(point2.y > border4.getPuntoDue().y) 
+							point2 = border4.getPuntoDue();
 
-						if(punto1.y < front.getPuntoUno().y)
-							punto1 = front.getPuntoUno();
+						if(point1.y < border.getPuntoUno().y)
+							point1 = border.getPuntoUno();
 
-						if(punto2.y > front.getPuntoUno().y) 
-							punto2 = front.getPuntoUno();
+						if(point2.y > border.getPuntoUno().y) 
+							point2 = border.getPuntoUno();
 
-						if(punto1.y < front.getPuntoDue().y)
-							punto1 = front.getPuntoDue();
+						if(point1.y < border.getPuntoDue().y)
+							point1 = border.getPuntoDue();
 
-						if(punto2.y > front.getPuntoDue().y)
-							punto2 = front.getPuntoDue();
+						if(point2.y > border.getPuntoDue().y)
+							point2 = border.getPuntoDue();
 
 
-						front.setPuntoUno(punto1);
-						front.setPuntoDue(punto2);
+						border.setPuntoUno(point1);
+						border.setPuntoDue(point2);
 
-						oldFront.add(front4);
-						front4=front;
+						oldFront.add(border4);
+						border4=border;
 					}
 					else
 					{
 						edge4 = true;
-						front4 = front;
+						border4 = border;
 					}
 				}
 
-				if(isUguale(front.getPuntoUno().y,0)
-						&& isUguale(front.getPuntoDue().y, 0))
+				if(isEqual(border.getPuntoUno().y,0)
+						&& isEqual(border.getPuntoDue().y, 0))
 				{
 					if(edge1)
 					{
-						punto1 = front1.getPuntoUno();
-						punto2 = front1.getPuntoUno();
+						point1 = border1.getPuntoUno();
+						point2 = border1.getPuntoUno();
 
 
-						if(punto1.x > front1.getPuntoDue().x)
-							punto1 = front1.getPuntoDue();
+						if(point1.x > border1.getPuntoDue().x)
+							point1 = border1.getPuntoDue();
 
-						if(punto2.x < front1.getPuntoDue().x) 
-							punto2 = front1.getPuntoDue();
+						if(point2.x < border1.getPuntoDue().x) 
+							point2 = border1.getPuntoDue();
 
-						if(punto1.x > front.getPuntoUno().x) 
-							punto1 = front.getPuntoUno();
+						if(point1.x > border.getPuntoUno().x) 
+							point1 = border.getPuntoUno();
 
-						if(punto2.x < front.getPuntoUno().x) 
-							punto2 = front.getPuntoUno();
+						if(point2.x < border.getPuntoUno().x) 
+							point2 = border.getPuntoUno();
 
-						if(punto1.x > front.getPuntoDue().x)
-							punto1 = front.getPuntoDue();
+						if(point1.x > border.getPuntoDue().x)
+							point1 = border.getPuntoDue();
 
-						if(punto2.x < front.getPuntoDue().x) 
-							punto2 = front.getPuntoDue();
+						if(point2.x < border.getPuntoDue().x) 
+							point2 = border.getPuntoDue();
 
 
-						front.setPuntoUno(punto1);
-						front.setPuntoDue(punto2);
+						border.setPuntoUno(point1);
+						border.setPuntoDue(point2);
 
-						oldFront.add(front1);
-						front1=front;
+						oldFront.add(border1);
+						border1=border;
 					}
 					else
 					{
 						edge1 = true;
-						front1 = front;
+						border1 = border;
 					}
 				} 
 
-				if(isUguale(front.getPuntoUno().y, maxY) && 
-						isUguale(front.getPuntoDue().y, maxY))
+				if(isEqual(border.getPuntoUno().y, maxY) && 
+						isEqual(border.getPuntoDue().y, maxY))
 				{
 					if(edge3)
 					{
-						punto1 = front3.getPuntoUno();
-						punto2 = front3.getPuntoUno();
+						point1 = border3.getPuntoUno();
+						point2 = border3.getPuntoUno();
 
 
-						if(punto1.x > front3.getPuntoDue().x)
-							punto1 = front3.getPuntoDue();
+						if(point1.x > border3.getPuntoDue().x)
+							point1 = border3.getPuntoDue();
 
-						if(punto2.x < front3.getPuntoDue().x)
-							punto2 = front3.getPuntoDue();
+						if(point2.x < border3.getPuntoDue().x)
+							point2 = border3.getPuntoDue();
 
-						if(punto1.x > front.getPuntoUno().x)
-							punto1 = front.getPuntoUno();
+						if(point1.x > border.getPuntoUno().x)
+							point1 = border.getPuntoUno();
 
-						if(punto2.x < front.getPuntoUno().x) 
-							punto2 = front.getPuntoUno();
+						if(point2.x < border.getPuntoUno().x) 
+							point2 = border.getPuntoUno();
 
-						if(punto1.x > front.getPuntoDue().x) 
-							punto1 = front.getPuntoDue();
+						if(point1.x > border.getPuntoDue().x) 
+							point1 = border.getPuntoDue();
 
-						if(punto2.x < front.getPuntoDue().x)
-							punto2 = front.getPuntoDue();
+						if(point2.x < border.getPuntoDue().x)
+							point2 = border.getPuntoDue();
 
 
-						front.setPuntoUno(punto1);
-						front.setPuntoDue(punto2);
+						border.setPuntoUno(point1);
+						border.setPuntoDue(point2);
 
-						oldFront.add(front3);
-						front3=front;
+						oldFront.add(border3);
+						border3=border;
 					}
 					else
 					{
 						edge3 = true;
-						front3 = front;
+						border3 = border;
 					}
 				} 
 
@@ -584,8 +574,8 @@ public class Diagram
 			listaFront = oldFront.iterator();
 			while(listaFront.hasNext())
 			{
-				front = (Border) listaFront.next();
-				this.cancellaFrontiera(cella, front);
+				border = (Border) listaFront.next();
+				this.deleteBorder(newCell, border);
 			}
 
 		} 
@@ -599,33 +589,33 @@ public class Diagram
 	    return (float)Math.sqrt(a * a + b * b);
 	}
 
-	public boolean aggiungiFrontiera(Cell sito, Border frontier)
+	public boolean addBorder(Cell sito, Border frontier)
 	{
 		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().add(frontier);
 	}
 
-	public boolean cancellaFrontiera(Cell sito, Border frontier)
+	public boolean deleteBorder(Cell sito, Border frontier)
 	{
 		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().remove(frontier);
 	}
 
-	public void cancellaCella(Cell sito)
+	public void deleteCell(Cell sito)
 	{
 		if(sito == null) return;
 
-		if(celle.contains(sito))
+		if(cellsList_.contains(sito))
 		{
-			celle.remove(sito);
-			ArrayList trasporto = (ArrayList)celle.clone();
+			cellsList_.remove(sito);
+			ArrayList trasporto = (ArrayList)cellsList_.clone();
 			this.clear();
 			Iterator listaTrasporto = trasporto.iterator();
 			while(listaTrasporto.hasNext())
 			{
 				Cell elementoCorrente = (Cell)listaTrasporto.next();
 				elementoCorrente.getVfrontiere().clear();
-				aggiungiCella(elementoCorrente);
+				addCell(elementoCorrente);
 			}
 
 		}
@@ -633,23 +623,23 @@ public class Diagram
 
 	public void clear()
 	{
-		celle.clear();
+		cellsList_.clear();
 	}
 
-	public Iterator getCelle()
+	public Iterator getCellIterator()
 	{
-		return celle.iterator();
+		return cellsList_.iterator();
 	}
 
-	public ArrayList getVCelle()
+	public ArrayList getCellsArray()
 	{
-		return celle;
+		return cellsList_;
 	}
 
 
-	public Cell trovaSito(PointF unPunto)
+	public Cell getCellByCoordinates(PointF unPunto)
 	{
-		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
+		for(Iterator listaSiti = this.getCellIterator(); listaSiti.hasNext();)
 		{
 			Cell currentSite = (Cell)listaSiti.next();
 			// Qua esiste un'inconsistenza con i pixel, non sempre!
@@ -661,13 +651,13 @@ public class Diagram
 		return null;
 	}
 
-	public Cell siteIsDragged(PointF unPunto, double zom)
+	public Cell selectCellForDragging(PointF unPunto)
 	{
 		Cell tempSito = null;
-		for(Iterator listaSiti = this.getCelle(); listaSiti.hasNext();)
+		for(Iterator listaSiti = this.getCellIterator(); listaSiti.hasNext();)
 		{
 			Cell currentSite = (Cell)listaSiti.next();
-			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN * 30 / (zom * 0.6))) // Qua esiste un problema di tunning           
+			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN * 30 / 0.6 )) // Qua esiste un problema di tunning           
 			{
 				if(tempSito == null)
 				{
@@ -690,7 +680,7 @@ public class Diagram
 		return new PointF( maxX, maxY );
 	}
 
-	public boolean isUguale(double num, int numIntero)
+	public boolean isEqual(double num, int numIntero)
 	{
 		double numero = (double)numIntero;
 		if((num != 0) && (numero != 0))
@@ -705,29 +695,29 @@ public class Diagram
 	}
 
 
-	public void aggiungiCellaDragged(Cell sito)
+	public void addDraggedCell(Cell cell)
 	{
-		if(sito == null) return;
+		if(cell == null) return;
 
-		ArrayList trasportoBis = (ArrayList)getVCelle().clone();
+		ArrayList trasportoBis = (ArrayList)getCellsArray().clone();
 		this.clear();
 		DISTANZA_MIN = 1;
-		trasportoBis.add(sito);
+		trasportoBis.add(cell);
 		Iterator listaTrasporto = trasportoBis.iterator();
 		while(listaTrasporto.hasNext())
 		{
 			Cell elementoCorrente = (Cell)listaTrasporto.next();
 			elementoCorrente.getVfrontiere().clear();
-			aggiungiCella(elementoCorrente);
+			addCell(elementoCorrente);
 		}
 		DISTANZA_MIN = 5;
 	}
 
 	//Metodi per il savetaggio dei punti
-	public void saveDati(FileWriter file) throws IOException                                                   
+	public void save(FileWriter file) throws IOException                                                   
 	{
 		PrintWriter out = new PrintWriter(file);
-		Iterator listaCelle = celle.iterator();
+		Iterator listaCelle = cellsList_.iterator();
 		while(listaCelle.hasNext())
 		{
 			Cell cella = (Cell)(listaCelle.next());
@@ -740,7 +730,7 @@ public class Diagram
 		file.close();
 	}
 
-	public void loadDati(FileReader file) throws IOException 
+	public void load(FileReader file) throws IOException 
 	{
 		BufferedReader input = new BufferedReader(file);
 		String riga;
@@ -755,7 +745,7 @@ public class Diagram
 				PointF p = new PointF(x, y);
 				Cell cella = new Cell (p);
 				cella.setColore(colore);
-				this.aggiungiCella(cella);
+				this.addCell(cella);
 			}
 			catch(NumberFormatException ec)
 			{
@@ -768,11 +758,11 @@ public class Diagram
 		}
 	}
 
-	public void cancellaArea(RectF unRettangolo, float zoom)
+	public void deleteArea(RectF unRettangolo, float zoom)
 	{
 		Cell cella = null;
 		RectF rett = unRettangolo;
-		Iterator it = celle.iterator();
+		Iterator it = cellsList_.iterator();
 		PointF punto;
 		ArrayList siti = new ArrayList();
 
@@ -790,10 +780,10 @@ public class Diagram
 		
 		for(int k = 0; k < siti.size(); k++)
 		{
-			celle.remove((Cell)siti.get(k));
+			cellsList_.remove((Cell)siti.get(k));
 		}
 
-		ArrayList trasporto = (ArrayList)celle.clone();
+		ArrayList trasporto = (ArrayList)cellsList_.clone();
 		this.clear();
 		Iterator listaTrasporto = trasporto.iterator();
 		
@@ -803,27 +793,12 @@ public class Diagram
 			punto = elementoCorrente.getKernel();
 			cella = new Cell(punto);
 			cella.setColore(elementoCorrente.getColore());
-			aggiungiCella(cella);
-		}
-	}
-
-	public void help()
-	{
-		celle.remove(celle.size() - 1);
-		ArrayList trasporto = (ArrayList)celle.clone();
-		this.clear();
-		Iterator listaTrasporto = trasporto.iterator();
-		while(listaTrasporto.hasNext())
-		{
-			Cell elementoCorrente = (Cell)listaTrasporto.next();
-			elementoCorrente.getVfrontiere().clear();
-			aggiungiCella(elementoCorrente);
-
+			addCell(cella);
 		}
 	}
 
 
-	private ArrayList celle;
+	private ArrayList cellsList_;
 	private static  int DISTANZA_MIN = 5; // Distanza minima tra due siti
 	private int maxX, maxY;
 	private static final double EPSI = 1E-14;
