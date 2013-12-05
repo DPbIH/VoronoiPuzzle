@@ -180,9 +180,9 @@ public class EditorView extends View
 	}
 
 	
-	public void SetDiagram( Diagram diagram )
+	public void generatePuzzle( int piecesCount )
 	{
-		diagram_ = diagram;
+		diagram_.generate(piecesCount);
 		invalidate();
 	}
 

@@ -26,6 +26,25 @@ public class Diagram
 		maxX = x;
 		maxY = y;
 	}
+	
+	public void generate( int cellsCount )
+	{
+		clear();
+		
+		Random generator = new Random();
+		for(int j = 1; j <= cellsCount; j++)
+		{
+			int coordX =  generator.nextInt( maxX );
+			int coordY = generator.nextInt( maxY );
+			Cell nextCell = new Cell( coordX, coordY );
+			addCell( nextCell );
+		}
+	}
+	
+	public void scale( int newWidth, int newHeight )
+	{
+		
+	}
 
 	public void addCell(Cell newCell)
 	{

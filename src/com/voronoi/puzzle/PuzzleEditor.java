@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
+
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,12 +35,13 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	private static final int PICK_IMAGE_FROM_CHOOSER 	= 1;
 	private static final int PICK_IMAGE_USE_CAMERA 		= 2;
 	private static final String mimeTypeImage 			= "image/*";
-	
+	private static final int maxTiles				 	= 50;
+
 	private String SCAN_PATH;
 	private MediaScannerConnection conn;
 	private Uri imgUri_, uriWorkaround_;
 	private File fileSelectedInPreviewer_;
-	
+
 	private static EditorView editor_;
 
 	@Override
@@ -58,13 +62,17 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	public void setImageUri( Uri uri )
 	{
 		imgUri_ = uri;
-		try {
+		try 
+		{
 			editor_.SetBackgroundImage( uri );
-		} catch (FileNotFoundException e) {
+		} 
+		catch (FileNotFoundException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
 	public void loadImage(View view) 
 	{
 		ImageSelectorDialog imageSelector = new ImageSelectorDialog();
@@ -76,48 +84,64 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		Intent intent = new Intent(this, GamePlay.class);
 		startActivity(intent);
 	}
-	
+
 	public void SetCellsEraseable(View view) 
 	{
-	    boolean on = ((ToggleButton)view).isChecked();
-	    if(on)
-	    {
-	    	ToggleButton dragBtn = (ToggleButton)findViewById(R.id.enableDragBtn);
-	    	if( dragBtn.isChecked() )
-	    	{
-	    		dragBtn.performClick();
-	    	}
-	    }
-	    
-	    editor_.setEraserEnabled(on);
+		boolean on = ((ToggleButton)view).isChecked();
+		if(on)
+		{
+			ToggleButton dragBtn = (ToggleButton)findViewById(R.id.enableDragBtn);
+			if( dragBtn.isChecked() )
+			{
+				dragBtn.performClick();
+			}
+		}
+
+		editor_.setEraserEnabled(on);
 	}
-	
+
 	public void SetCellsDragable(View view) 
 	{
-	    boolean on = ((ToggleButton)view).isChecked();
-	    if(on)
-	    {
-	    	ToggleButton eraserBtn = (ToggleButton)findViewById(R.id.enableEraserBtn);
-	    	if( eraserBtn.isChecked() )
-	    	{
-	    		eraserBtn.performClick();
-	    	}
-	    }
-	    
-	    editor_.setDraggingEnabled(on);
+		boolean on = ((ToggleButton)view).isChecked();
+		if(on)
+		{
+			ToggleButton eraserBtn = (ToggleButton)findViewById(R.id.enableEraserBtn);
+			if( eraserBtn.isChecked() )
+			{
+				eraserBtn.performClick();
+			}
+		}
+
+		editor_.setDraggingEnabled(on);
+	}
+
+	public void createRandomDiagram(View view)
+	{
+		final SeekBarDialog seek = new SeekBarDialog(this);
+		seek.setMax( maxTiles );
+		seek.setOkListener( new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				editor_.generatePuzzle( seek.getValue() );
+				dialog.dismiss();
+			}
+		});
+		seek.show();
 	}
 
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  
+	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) 
+		if ( keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0 )
 		{
-			startActivity(new Intent(this, StartPage.class) );     
+			startActivity(new Intent(this, StartPage.class) );
 			return true;
 		}
 
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyDown( keyCode, event );
 	}
 
 	public static class ImageSelectorDialog extends DialogFragment {
@@ -141,7 +165,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 						{
 							e.printStackTrace();
 						}
-						
+
 						break;
 					case 1:
 						editor.pickImageFromAppGallery();
@@ -173,121 +197,121 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 			}
 		case PICK_IMAGE_FROM_CHOOSER:
 			if( (resultCode == RESULT_OK) )
-	        {
-	        	setImageUri( data.getData() );
-	        }
+			{
+				setImageUri( data.getData() );
+			}
 			break;
 		}
-    }
-	
+	}
+
 	private File createFileForImageInAppGallery() throws IOException
 	{
 		File appGallery = new File( ((VoronoiApplication)this.getApplication()).ImageGalleryPath() );
-	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String imageFileName = "Gallery_" + timeStamp;
-	    File image = File.createTempFile( imageFileName, ".jpg", appGallery );
-	    
-	    return image;
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "Gallery_" + timeStamp;
+		File image = File.createTempFile( imageFileName, ".jpg", appGallery );
+
+		return image;
 	}
-	
+
 	public void captureImageUsingCamera() throws IOException
 	{
 		File img = createFileForImageInAppGallery();
-		
+
 		// MediaStore.EXTRA_OUTPUT bug workaround
 		uriWorkaround_ = Uri.fromFile(img);
-		
+
 		Intent takePictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
 		takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(img));
-	    startActivityForResult( takePictureIntent, PICK_IMAGE_USE_CAMERA );
+		startActivityForResult( takePictureIntent, PICK_IMAGE_USE_CAMERA );
 	}
-	
+
 	public void exploreFileSystemAndPickImage( String path )
 	{
 		File dir = new File( path );
-        
-        FileDialog fileDialog = new FileDialog(this, dir);
-        fileDialog.setMIMEFilter( mimeTypeImage );
-        
-        fileDialog.addFileListener(new FileDialog.FileSelectedListener()
-        {
-            public void fileSelected(File file)
-            {
-               previewSelectedImage( file.getAbsolutePath() );
-            }
-        });
-        
-        fileDialog.showDialog();
+
+		FileDialog fileDialog = new FileDialog(this, dir);
+		fileDialog.setMIMEFilter( mimeTypeImage );
+
+		fileDialog.addFileListener(new FileDialog.FileSelectedListener()
+		{
+			public void fileSelected(File file)
+			{
+				previewSelectedImage( file.getAbsolutePath() );
+			}
+		});
+
+		fileDialog.showDialog();
 	}
-	
+
 	public File getFileSelectedInPreviewer()
 	{
 		return fileSelectedInPreviewer_;
 	}
-	
+
 	// To do: refactor this method
 	private void previewSelectedImage( String imgPath )
 	{
 		fileSelectedInPreviewer_ = new File(imgPath);
-	
+
 		// create image for Preview Dialog
 		Bitmap bitmap = ((BitmapDrawable) Drawable.createFromPath(imgPath)).getBitmap();
 		Bitmap bitmapForPreview = scaleImg(bitmap, 150, true);
 		Drawable dr = new BitmapDrawable(getResources(), bitmapForPreview );
-		
+
 		// create view for Preview Dialog
 		ImageView image=new ImageView(this);
 		image.setImageDrawable(dr);
-		
+
 		// Create Preview Dialog
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
-	    builder.setCancelable(true);
-	    builder.setView(image); 
-	    builder.setTitle("Image Preview");
-	    builder.setInverseBackgroundForced(true);
-	    builder.setPositiveButton("Choose", new DialogInterface.OnClickListener()
-	    {
-	        @Override
-	        public void onClick(DialogInterface dialog, int which) 
-	        {
-	            dialog.dismiss();
-	            setImageUri( Uri.fromFile( getFileSelectedInPreviewer() ) );
-	        }
-	    });
-	    
-	    builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
-	    {
-	        @Override
-	        public void onClick(DialogInterface dialog, int which)
-	        {
-	            dialog.dismiss();
-	            exploreFileSystemAndPickImage( getFileSelectedInPreviewer().getParent() );
-	        }
-	    });
-	    
-	    AlertDialog alert=builder.create();
-	    alert.show();
+		builder.setCancelable(true);
+		builder.setView(image); 
+		builder.setTitle("Image Preview");
+		builder.setInverseBackgroundForced(true);
+		builder.setPositiveButton("Choose", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which) 
+			{
+				dialog.dismiss();
+				setImageUri( Uri.fromFile( getFileSelectedInPreviewer() ) );
+			}
+		});
+
+		builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				dialog.dismiss();
+				exploreFileSystemAndPickImage( getFileSelectedInPreviewer().getParent() );
+			}
+		});
+
+		AlertDialog alert=builder.create();
+		alert.show();
 	}
-	
+
 	private static Bitmap scaleImg(Bitmap realImage, float maxImageSize, boolean filter) 
 	{
-	    float ratio = Math.min(
-	            (float) maxImageSize / realImage.getWidth(),
-	            (float) maxImageSize / realImage.getHeight());
-	    int width = Math.round((float) ratio * realImage.getWidth());
-	    int height = Math.round((float) ratio * realImage.getHeight());
+		float ratio = Math.min(
+				(float) maxImageSize / realImage.getWidth(),
+				(float) maxImageSize / realImage.getHeight());
+		int width = Math.round((float) ratio * realImage.getWidth());
+		int height = Math.round((float) ratio * realImage.getHeight());
 
-	    Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
-	            height, filter);
-	    return newBitmap;
+		Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+				height, filter);
+		return newBitmap;
 	}
-	
+
 	public void pickImageFromAppGallery()
 	{
 		String path = ((VoronoiApplication)this.getApplication()).ImageGalleryPath();
 		scanDirectory( path );
 	}
-	
+
 	public void pickImageFromDeviceGallery()
 	{
 		Uri uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -298,8 +322,8 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	{
 		File folder = new File(dir);
 		File allFiles[] = folder.listFiles();
-        SCAN_PATH = allFiles[0].getAbsolutePath();
-		
+		SCAN_PATH = allFiles[0].getAbsolutePath();
+
 		if(conn != null)
 		{
 			conn.disconnect();
@@ -312,7 +336,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 	public void onMediaScannerConnected()
 	{
-        conn.scanFile(SCAN_PATH, null);
+		conn.scanFile(SCAN_PATH, null);
 	}
 
 
@@ -331,7 +355,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 			conn = null;
 		}
 	}
-	
+
 	private void createImageChooser(Uri uri)
 	{
 		if (uri != null) 
