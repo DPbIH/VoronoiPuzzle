@@ -17,5 +17,8 @@
     <string name="eraserOFF">Erase OFF</string>
     <string name="dragON">Drag ON</string>
     <string name="dragOFF">Drag OFF</string>
+    <string name="createPuzzle">Create</string>
+    <string name="resetEditor">Reset</string>
+    <string name="randomize">Random</string>
 
 </resources>

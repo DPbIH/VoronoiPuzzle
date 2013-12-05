@@ -17,42 +17,41 @@
 
         <ImageButton
             android:id="@+id/loadImgBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher"
             android:layout_marginLeft="10dp"
              android:onClick="loadImage"
 	        />
 
-        <Spinner
-            android:id="@+id/tilesCountSetter"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-	        />
-
         <Button
             android:id="@+id/generateDiaBtn"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:text="Rand"
-            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="80dp"
+            android:text="@string/randomize"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
 	        />
         
         <Button
             android:id="@+id/resetDiaBtn"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:text="Reset"
-            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="80dp"
+            android:text="@string/resetEditor"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
 	        />
         
         <Button
             android:id="@+id/createPuzzleBtn"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:text="Create"
-            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="80dp"
+            android:text="@string/createPuzzle"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
             android:onClick="startGamePlay"
 	        />
         
