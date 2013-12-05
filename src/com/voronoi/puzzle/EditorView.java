@@ -42,17 +42,11 @@ public class EditorView extends View
 
 	private void initPaints() {
 		cellPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
-		kernelPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
-		quadPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
 		cellPaint_.setColor( getResources().getColor(R.color.orange) );
 		cellPaint_.setStrokeWidth( lineWidth_ );
 		cellPaint_.setStyle(Style.STROKE);
-		kernelPaint_.setColor( getResources().getColor(R.color.white) );
-		kernelPaint_.setStyle(Style.FILL);
-		quadPaint_.setColor( getResources().getColor(R.color.white) );
-		quadPaint_.setStyle(Style.FILL);
 		borderPaint_.setColor( getResources().getColor(R.color.orange) );
 		borderPaint_.setStrokeWidth( 5 );
 		borderPaint_.setStyle(Style.STROKE);
@@ -78,18 +72,7 @@ public class EditorView extends View
 	{
 		super.onDraw(canvas);
 		
-		if( bgImg_ != null )
-		{
-			setBackgroundDrawable( bgImg_ );
-		}
-		
 		drawBorders(canvas);
-		
-		if(diagram_ == null)
-		{
-			return;
-		}
-
 		drawCells(canvas);
 	}
 
@@ -203,10 +186,13 @@ public class EditorView extends View
 		invalidate();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void SetBackgroundImage( Uri imgUri ) throws FileNotFoundException
 	{
 		Bitmap bm = BitmapFactory.decodeStream( getContext().getContentResolver().openInputStream(imgUri) );
 		bgImg_ = new BitmapDrawable(getResources(), bm);
+		setBackgroundDrawable( bgImg_ );
+		
 		invalidate();
 	}
 	
@@ -242,26 +228,6 @@ public class EditorView extends View
 
 				canvas.drawPath( path, cellPaint_ );
 			}
-
-			DrawCellKernel(canvas, cell);
-		}
-	}
-
-	private void DrawCellKernel(Canvas canvas, Cell cell) 
-	{
-		if( ! draggingEnabled_ )
-		{
-			canvas.drawCircle( 
-					cell.getKernel().x, cell.getKernel().y, radius_,
-					kernelPaint_ );
-		}
-		else
-		{
-			RectF rect = new RectF( 
-					cell.getKernel().x - radius_, cell.getKernel().x - radius_,
-					cell.getKernel().x + radius_, cell.getKernel().x + radius_);
-			
-			canvas.drawRect( rect, quadPaint_ );
 		}
 	}
 
@@ -301,7 +267,6 @@ public class EditorView extends View
 	private Diagram 		diagram_;
 	private BitmapDrawable 	bgImg_;
 	
-	private int radius_   				= 5;
 	private int lineWidth_ 				= 3;
 
 	private boolean eraserEnabled_   	= false;
@@ -311,8 +276,6 @@ public class EditorView extends View
 	private Cell draggedCell_  			= null;
 	
 	Paint cellPaint_;
-	Paint kernelPaint_;
-	Paint quadPaint_;
 	Paint borderPaint_;
 	
 }

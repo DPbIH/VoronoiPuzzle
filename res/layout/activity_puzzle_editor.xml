@@ -74,6 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:width="60dp"
+            android:textOff="@string/dragOFF"
+            android:textOn="@string/dragON"
             android:onClick="SetCellsDragable" />
         
         <ToggleButton
@@ -81,6 +84,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:width="60dp"
+            android:textOff="@string/eraserOFF"
+            android:textOn="@string/eraserON"
             android:onClick="SetCellsEraseable" />
         
     </LinearLayout>

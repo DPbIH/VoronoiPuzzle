@@ -13,5 +13,9 @@
         <item >Device Gallery</item><item >File System</item>
         
     </string-array>
+    <string name="eraserON">Erase ON</string>
+    <string name="eraserOFF">Erase OFF</string>
+    <string name="dragON">Drag ON</string>
+    <string name="dragOFF">Drag OFF</string>
 
 </resources>

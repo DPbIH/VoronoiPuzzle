@@ -83,7 +83,10 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	    if(on)
 	    {
 	    	ToggleButton dragBtn = (ToggleButton)findViewById(R.id.enableDragBtn);
-	    	dragBtn.setChecked(false);
+	    	if( dragBtn.isChecked() )
+	    	{
+	    		dragBtn.performClick();
+	    	}
 	    }
 	    
 	    editor_.setEraserEnabled(on);
@@ -95,7 +98,10 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	    if(on)
 	    {
 	    	ToggleButton eraserBtn = (ToggleButton)findViewById(R.id.enableEraserBtn);
-	    	eraserBtn.setChecked(false);
+	    	if( eraserBtn.isChecked() )
+	    	{
+	    		eraserBtn.performClick();
+	    	}
 	    }
 	    
 	    editor_.setDraggingEnabled(on);
