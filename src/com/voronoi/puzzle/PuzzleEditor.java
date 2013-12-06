@@ -59,12 +59,12 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		return true;
 	}
 
-	public void setImageUri( Uri uri )
+	public void setImage( Uri uri )
 	{
 		imgUri_ = uri;
 		try 
 		{
-			editor_.SetBackgroundImage( uri );
+			editor_.setBackgroundImage( uri );
 		} 
 		catch (FileNotFoundException e)
 		{
@@ -130,6 +130,11 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		});
 		seek.show();
 	}
+	
+	public void resetDiagram(View view)
+	{
+		editor_.reset();
+	}
 
 
 	@Override
@@ -192,13 +197,13 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		case PICK_IMAGE_USE_CAMERA:
 			if( (resultCode == RESULT_OK) && (data == null) )
 			{
-				setImageUri(uriWorkaround_);
+				setImage(uriWorkaround_);
 				break;
 			}
 		case PICK_IMAGE_FROM_CHOOSER:
 			if( (resultCode == RESULT_OK) )
 			{
-				setImageUri( data.getData() );
+				setImage( data.getData() );
 			}
 			break;
 		}
@@ -275,7 +280,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 			public void onClick(DialogInterface dialog, int which) 
 			{
 				dialog.dismiss();
-				setImageUri( Uri.fromFile( getFileSelectedInPreviewer() ) );
+				setImage( Uri.fromFile( getFileSelectedInPreviewer() ) );
 			}
 		});
 

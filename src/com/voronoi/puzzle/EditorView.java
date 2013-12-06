@@ -187,7 +187,7 @@ public class EditorView extends View
 	}
 
 	@SuppressWarnings("deprecation")
-	public void SetBackgroundImage( Uri imgUri ) throws FileNotFoundException
+	public void setBackgroundImage( Uri imgUri ) throws FileNotFoundException
 	{
 		Bitmap bm = BitmapFactory.decodeStream( getContext().getContentResolver().openInputStream(imgUri) );
 		bgImg_ = new BitmapDrawable(getResources(), bm);
@@ -196,10 +196,9 @@ public class EditorView extends View
 		invalidate();
 	}
 	
-	public void resetView()
+	public void reset()
 	{
 		diagram_.clear();
-		bgImg_ = null;
 		invalidate();
 	}
 

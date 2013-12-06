@@ -43,6 +43,7 @@
             android:text="@string/resetEditor"
             android:textSize="14sp"
             android:layout_marginLeft="5dp"
+            android:onClick="resetDiagram"
 	        />
         
         <Button
