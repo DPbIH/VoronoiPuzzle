@@ -9,6 +9,7 @@ import java.util.Random;
 
 
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,10 +25,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 public class PuzzleEditor extends Activity implements MediaScannerConnectionClient 
@@ -68,7 +71,6 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		} 
 		catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -261,17 +263,29 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 		// create image for Preview Dialog
 		Bitmap bitmap = ((BitmapDrawable) Drawable.createFromPath(imgPath)).getBitmap();
-		Bitmap bitmapForPreview = scaleImg(bitmap, 150, true);
+		Bitmap bitmapForPreview = scaleImg(bitmap, 250, true);
 		Drawable dr = new BitmapDrawable(getResources(), bitmapForPreview );
 
 		// create view for Preview Dialog
+		LinearLayout layout = new LinearLayout( this );
+		layout.setOrientation(LinearLayout.VERTICAL);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams( 
+				LinearLayout.LayoutParams.WRAP_CONTENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+
+		params.setMargins(20, 20, 20, 20);
+		params.gravity = Gravity.CENTER;
+		
 		ImageView image=new ImageView(this);
 		image.setImageDrawable(dr);
+		image.setLayoutParams(params);
+		
+		layout.addView(image);
 
 		// Create Preview Dialog
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder.setCancelable(true);
-		builder.setView(image); 
+		builder.setView(layout);
 		builder.setTitle("Image Preview");
 		builder.setInverseBackgroundForced(true);
 		builder.setPositiveButton("Choose", new DialogInterface.OnClickListener()
