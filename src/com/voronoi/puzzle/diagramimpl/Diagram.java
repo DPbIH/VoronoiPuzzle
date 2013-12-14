@@ -43,7 +43,20 @@ public class Diagram
 	
 	public void scale( int newWidth, int newHeight )
 	{
+		float xMultiplier = (float)newWidth/maxX;
+		float yMultiplier = (float)newHeight/maxY;
+				
+		ArrayList<Cell> cellsArrayCopy = new ArrayList( (ArrayList<Cell>)getCellsArray() );
+		setDiagramSize(newWidth, newHeight);
 		
+		
+		Iterator<Cell> iter = cellsArrayCopy.iterator();
+		while( iter.hasNext() )
+		{
+			PointF oldKernel = iter.next().getKernel();
+			PointF newKernel = new PointF(oldKernel.x * xMultiplier, oldKernel.y * yMultiplier);
+			addCell( new Cell( newKernel ) );
+		}
 	}
 
 	public void addCell(Cell newCell)
