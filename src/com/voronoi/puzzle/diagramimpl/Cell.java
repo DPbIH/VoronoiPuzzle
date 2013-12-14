@@ -8,19 +8,19 @@ public class Cell implements Cloneable
 {
 	public  Cell(float x, float y)
 	{
-		border = new ArrayList();
+		border = new ArrayList<Border>();
 		side = new PointF(x, y);
 	}
 	
 	public Cell(PointF unPunto)
 	{
-		border = new ArrayList();
+		border = new ArrayList<Border>();
 		side = unPunto;
 	}
 
 	public Cell(PointF unPunto, boolean col)
 	{
-		border = new ArrayList();
+		border = new ArrayList<Border>();
 		side = unPunto;
 		this.colore = col;
 	}
@@ -74,8 +74,8 @@ public class Cell implements Cloneable
 	{
 		PointF cornerPoint = new PointF();
 		
-		ArrayList vertexes = getVertexes();
-		Iterator it = vertexes.iterator();
+		ArrayList<PointF> vertexes = getVertexes();
+		Iterator<PointF> it = vertexes.iterator();
 		
 		if( it.hasNext() )
 		{
@@ -107,11 +107,11 @@ public class Cell implements Cloneable
 		return cornerPoint;
 	}
 	
-	public ArrayList getVertexes()
+	public ArrayList<PointF> getVertexes()
 	{   
 		Border front;
-		ArrayList  listaPunti = new ArrayList ();
-		Iterator listaElementi = border.iterator();
+		ArrayList<PointF>  listaPunti = new ArrayList<PointF> ();
+		Iterator<Border> listaElementi = border.iterator();
 		while(listaElementi.hasNext())
 		{
 			front= (Border)listaElementi.next();
@@ -127,7 +127,7 @@ public class Cell implements Cloneable
 				listaPunti.add(puntoDue);
 			}
 
-			class ConfrontaAngoli implements Comparator
+			class ConfrontaAngoli implements Comparator<Object>
 			{
 				public int compare(Object a, Object b)
 				{
@@ -173,12 +173,12 @@ public class Cell implements Cloneable
 		}
 	}
 
-	public ArrayList getVfrontiere()
+	public ArrayList<Border> getVfrontiere()
 	{
 		return  border;
 	}
 
-	public Iterator getBordersIt()
+	public Iterator<Border> getBordersIt()
 	{
 		return border.iterator();
 	}
@@ -247,7 +247,7 @@ public class Cell implements Cloneable
 	}
 
 
-	private ArrayList border;
+	private ArrayList<Border> border;
 	private PointF side;
 	private static final double EPS = 1E-13;
 	private boolean colore = false;

@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.lang.Exception;
-
 import android.graphics.PointF;
 import android.graphics.RectF;
 
@@ -15,16 +13,16 @@ public class Diagram
 {
 	public Diagram(int sizeX, int sizeY)
 	{
-		maxX = sizeX;
-		maxY = sizeY;
-		cellsList_ = new ArrayList();
+		width_ = sizeX;
+		height_ = sizeY;
+		cellsList_ = new ArrayList<Cell>();
 	}
 
 	public void setDiagramSize(int x, int y)
 	{
 		this.clear();
-		maxX = x;
-		maxY = y;
+		width_ = x;
+		height_ = y;
 	}
 	
 	public void generate( int cellsCount )
@@ -34,8 +32,8 @@ public class Diagram
 		Random generator = new Random();
 		for(int j = 1; j <= cellsCount; j++)
 		{
-			int coordX =  generator.nextInt( maxX );
-			int coordY = generator.nextInt( maxY );
+			int coordX =  generator.nextInt( width_ );
+			int coordY = generator.nextInt( height_ );
 			Cell nextCell = new Cell( coordX, coordY );
 			addCell( nextCell );
 		}
@@ -43,12 +41,12 @@ public class Diagram
 	
 	public void scale( int newWidth, int newHeight )
 	{
-		float xMultiplier = (float)newWidth/maxX;
-		float yMultiplier = (float)newHeight/maxY;
+		float xMultiplier = (float)newWidth/width_;
+		float yMultiplier = (float)newHeight/height_;
 				
-		ArrayList<Cell> cellsArrayCopy = new ArrayList( (ArrayList<Cell>)getCellsArray() );
-		setDiagramSize(newWidth, newHeight);
+		ArrayList<Cell> cellsArrayCopy = new ArrayList<Cell>( getCellsArray() );
 		
+		setDiagramSize(newWidth, newHeight);
 		
 		Iterator<Cell> iter = cellsArrayCopy.iterator();
 		while( iter.hasNext() )
@@ -61,14 +59,14 @@ public class Diagram
 
 	public void addCell(Cell newCell)
 	{
-		Iterator cellsIt;
-		Iterator bordersIt;
+		Iterator<Cell> cellsIt;
+		Iterator<Border> bordersIt;
 		yyy = 0;
 
-		ArrayList madeCells = new ArrayList(); 
-		Iterator madeCellsIt;
+		ArrayList<Cell> madeCells = new ArrayList<Cell>(); 
+		Iterator<Cell> madeCellsIt;
 
-		Iterator listaFront;
+		Iterator<Border> listaFront;
 
 		Cell nextCell, cell2, madeCell;
 		Border border, border1, border2, border3, border4, newBorder;
@@ -90,9 +88,9 @@ public class Diagram
 		if(cellsList_.size() == 1)
 		{
 			PointF p1 = new PointF(0, 0);
-			PointF p2 = new PointF(maxX, 0);
-			PointF p3 = new PointF(maxX, maxY);
-			PointF p4 = new PointF(0, maxY);
+			PointF p2 = new PointF(width_, 0);
+			PointF p3 = new PointF(width_, height_);
+			PointF p4 = new PointF(0, height_);
 
 			this.addBorder(newCell,new Border(newCell, null, p1, p4));
 			this.addBorder(newCell,new Border(newCell, null, p4, p3));
@@ -184,7 +182,7 @@ public class Diagram
 				addBorder(newCell,new Border(newCell, null, point1, limit));
 			}
 
-			ArrayList oldFront = new ArrayList();
+			ArrayList<Border> oldFront = new ArrayList<Border>();
 			bordersIt = nextCell.getBordersIt();
 			while(bordersIt.hasNext())
 			{
@@ -432,12 +430,12 @@ public class Diagram
 			oldFront.clear();
 			boolean edge1 = false, edge2 = false, edge3 = false, edge4 = false;
 
-			Iterator listaFrontiereCella = newCell.getBordersIt();
+			Iterator<Border> listaFrontiereCella = newCell.getBordersIt();
 			while(listaFrontiereCella.hasNext())
 			{            
 				border = (Border) listaFrontiereCella.next();
-				if(isEqual(border.getPuntoUno().x, maxX) && 
-						isEqual(border.getPuntoDue().x, maxX))
+				if(isEqual(border.getPuntoUno().x, width_) && 
+						isEqual(border.getPuntoDue().x, width_))
 				{
 					if(edge2)
 					{
@@ -558,8 +556,8 @@ public class Diagram
 					}
 				} 
 
-				if(isEqual(border.getPuntoUno().y, maxY) && 
-						isEqual(border.getPuntoDue().y, maxY))
+				if(isEqual(border.getPuntoUno().y, height_) && 
+						isEqual(border.getPuntoDue().y, height_))
 				{
 					if(edge3)
 					{
@@ -623,13 +621,11 @@ public class Diagram
 
 	public boolean addBorder(Cell sito, Border frontier)
 	{
-		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().add(frontier);
 	}
 
 	public boolean deleteBorder(Cell sito, Border frontier)
 	{
-		Cell p = frontier.getVicinoDi(sito);
 		return sito.getVfrontiere().remove(frontier);
 	}
 
@@ -640,9 +636,9 @@ public class Diagram
 		if(cellsList_.contains(sito))
 		{
 			cellsList_.remove(sito);
-			ArrayList trasporto = (ArrayList)cellsList_.clone();
+			ArrayList<Cell> trasporto = (ArrayList<Cell>)cellsList_.clone();
 			this.clear();
-			Iterator listaTrasporto = trasporto.iterator();
+			Iterator<Cell> listaTrasporto = trasporto.iterator();
 			while(listaTrasporto.hasNext())
 			{
 				Cell elementoCorrente = (Cell)listaTrasporto.next();
@@ -658,12 +654,12 @@ public class Diagram
 		cellsList_.clear();
 	}
 
-	public Iterator getCellIterator()
+	public Iterator<Cell> getCellIterator()
 	{
 		return cellsList_.iterator();
 	}
 
-	public ArrayList getCellsArray()
+	public ArrayList<Cell> getCellsArray()
 	{
 		return cellsList_;
 	}
@@ -671,7 +667,7 @@ public class Diagram
 
 	public Cell getCellByCoordinates(PointF unPunto)
 	{
-		for(Iterator listaSiti = this.getCellIterator(); listaSiti.hasNext();)
+		for(Iterator<Cell> listaSiti = this.getCellIterator(); listaSiti.hasNext();)
 		{
 			Cell currentSite = (Cell)listaSiti.next();
 			// Qua esiste un'inconsistenza con i pixel, non sempre!
@@ -686,7 +682,7 @@ public class Diagram
 	public Cell selectCellForDragging(PointF unPunto)
 	{
 		Cell tempSito = null;
-		for(Iterator listaSiti = this.getCellIterator(); listaSiti.hasNext();)
+		for(Iterator<Cell> listaSiti = this.getCellIterator(); listaSiti.hasNext();)
 		{
 			Cell currentSite = (Cell)listaSiti.next();
 			if( GetDistance( currentSite.getKernel(), unPunto) < (DISTANZA_MIN * 30 / 0.6 )) // Qua esiste un problema di tunning           
@@ -709,7 +705,7 @@ public class Diagram
 
 	public PointF getSize()
 	{
-		return new PointF( maxX, maxY );
+		return new PointF( width_, height_ );
 	}
 
 	public boolean isEqual(double num, int numIntero)
@@ -731,11 +727,11 @@ public class Diagram
 	{
 		if(cell == null) return;
 
-		ArrayList trasportoBis = (ArrayList)getCellsArray().clone();
+		ArrayList<Cell> trasportoBis = (ArrayList<Cell>)getCellsArray().clone();
 		this.clear();
 		DISTANZA_MIN = 1;
 		trasportoBis.add(cell);
-		Iterator listaTrasporto = trasportoBis.iterator();
+		Iterator<Cell> listaTrasporto = trasportoBis.iterator();
 		while(listaTrasporto.hasNext())
 		{
 			Cell elementoCorrente = (Cell)listaTrasporto.next();
@@ -749,7 +745,7 @@ public class Diagram
 	public void save(FileWriter file) throws IOException                                                   
 	{
 		PrintWriter out = new PrintWriter(file);
-		Iterator listaCelle = cellsList_.iterator();
+		Iterator<Cell> listaCelle = cellsList_.iterator();
 		while(listaCelle.hasNext())
 		{
 			Cell cella = (Cell)(listaCelle.next());
@@ -794,9 +790,9 @@ public class Diagram
 	{
 		Cell cella = null;
 		RectF rett = unRettangolo;
-		Iterator it = cellsList_.iterator();
+		Iterator<Cell> it = cellsList_.iterator();
 		PointF punto;
-		ArrayList siti = new ArrayList();
+		ArrayList<Cell> siti = new ArrayList<Cell>();
 
 		while(it.hasNext())
 		{
@@ -815,9 +811,9 @@ public class Diagram
 			cellsList_.remove((Cell)siti.get(k));
 		}
 
-		ArrayList trasporto = (ArrayList)cellsList_.clone();
+		ArrayList<Cell> trasporto = (ArrayList<Cell>)cellsList_.clone();
 		this.clear();
-		Iterator listaTrasporto = trasporto.iterator();
+		Iterator<Cell> listaTrasporto = trasporto.iterator();
 		
 		while(listaTrasporto.hasNext())
 		{
@@ -830,9 +826,9 @@ public class Diagram
 	}
 
 
-	private ArrayList cellsList_;
+	private ArrayList<Cell> cellsList_;
 	private static  int DISTANZA_MIN = 5; // Distanza minima tra due siti
-	private int maxX, maxY;
+	private int width_, height_;
 	private static final double EPSI = 1E-14;
 	private int yyy;
 
