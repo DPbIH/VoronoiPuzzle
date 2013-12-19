@@ -21,10 +21,14 @@ public class TilesCreator
 
 	public ArrayList<Tile> getTiles( Diagram diagram, Bitmap bmp )
 	{
+		if( (diagram == null) || (bmp == null) )
+		{
+			return null;
+		}
+		
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-		PointF diagramSize = diagram.getSize();
-		Bitmap scaledBmp = getScaledBitmap( bmp, (int)diagramSize.x, (int)diagramSize.y );
+		Bitmap scaledBmp = getScaledBitmap( bmp, (int)diagram.getWidth(), (int)diagram.getHeight() );
 
 		Iterator<Cell> cellsIt = diagram.getCellIterator();
 		while( cellsIt.hasNext() )
@@ -36,6 +40,7 @@ public class TilesCreator
 			newTile.setTargetPos( nextCell.TopLeft() );
 			newTile.setNumber( diagram.getCellsArray().indexOf( nextCell ) );
 			newTile.setBitmap( getBitmapSlice( scaledBmp, nextCell ) );
+			newTile.setVertexes( getCellVertexesWithRelativeCoordinates( nextCell ) );
 
 			tiles.add( newTile );
 		}
@@ -63,10 +68,37 @@ public class TilesCreator
 		return sliceBmp;
 	}
 
+	private ArrayList<PointF> getCellVertexesWithRelativeCoordinates( Cell cell )
+	{
+		ArrayList<PointF> vertexes = new ArrayList<PointF>();
+		
+		PointF posTopLeft = cell.TopLeft();
+		
+		Iterator<PointF> vertexesIt = cell.getVertexes().iterator();
+		while( vertexesIt.hasNext() )
+		{
+			PointF nextVertex = vertexesIt.next();
+			PointF vertexWithRelativeCoordinates = new PointF( 
+					nextVertex.x - posTopLeft.x,
+					nextVertex.y - posTopLeft.y 
+					);
+			
+			vertexes.add( vertexWithRelativeCoordinates ); 
+		}
+		
+		return vertexes;
+	}
+	
 	private Path getCellPoly( Cell cell )
 	{
 		Path poly = new Path();
 		Iterator<PointF> it = cell.getVertexes().iterator();
+		if( it.hasNext() )
+		{
+			PointF firstVertex = it.next();
+			poly.moveTo( firstVertex.x, firstVertex.y );
+		}
+		
 		while( it.hasNext() )
 		{
 			PointF nextVertex = it.next();

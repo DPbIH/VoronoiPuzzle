@@ -56,6 +56,14 @@ public class Diagram
 			addCell( new Cell( newKernel ) );
 		}
 	}
+	
+	public void scale( float ratio )
+	{
+		int newWidth 	= (int) (ratio * width_);
+		int newHeight	= (int) (ratio * height_);
+		
+		scale( newWidth, newHeight );
+	}
 
 	public void addCell(Cell newCell)
 	{
@@ -629,13 +637,13 @@ public class Diagram
 		return sito.getVfrontiere().remove(frontier);
 	}
 
-	public void deleteCell(Cell sito)
+	public void deleteCell(Cell cell)
 	{
-		if(sito == null) return;
+		if(cell == null) return;
 
-		if(cellsList_.contains(sito))
+		if(cellsList_.contains(cell))
 		{
-			cellsList_.remove(sito);
+			cellsList_.remove(cell);
 			ArrayList<Cell> trasporto = (ArrayList<Cell>)cellsList_.clone();
 			this.clear();
 			Iterator<Cell> listaTrasporto = trasporto.iterator();
@@ -703,9 +711,14 @@ public class Diagram
 		return tempSito;
 	}
 
-	public PointF getSize()
+	public float getWidth()
 	{
-		return new PointF( width_, height_ );
+		return width_;
+	}
+	
+	public float getHeight()
+	{
+		return height_;
 	}
 
 	public boolean isEqual(double num, int numIntero)

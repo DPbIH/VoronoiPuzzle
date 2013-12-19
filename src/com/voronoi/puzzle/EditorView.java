@@ -132,8 +132,6 @@ public class EditorView extends View
 		
 		float x 		= event.getX();
 		float y 		= event.getY();
-
-		int indiceCella = 0;
 		
 		if(draggedCell_ == null)
 		{
@@ -189,8 +187,9 @@ public class EditorView extends View
 	@SuppressWarnings("deprecation")
 	public void setBackgroundImage( Uri imgUri ) throws FileNotFoundException
 	{
-		Bitmap bm = BitmapFactory.decodeStream( getContext().getContentResolver().openInputStream(imgUri) );
-		bgImg_ = new BitmapDrawable(getResources(), bm);
+		Bitmap bmp = BitmapFactory.decodeStream( getContext().getContentResolver().openInputStream(imgUri) );
+		Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, getWidth(), getHeight(), true );
+		bgImg_ = new BitmapDrawable(getResources(), scaledBmp);
 		setBackgroundDrawable( bgImg_ );
 		
 		invalidate();
