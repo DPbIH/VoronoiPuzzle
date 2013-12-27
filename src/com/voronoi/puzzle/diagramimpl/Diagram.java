@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
+
 import android.graphics.PointF;
 import android.graphics.RectF;
 
@@ -15,14 +16,25 @@ public class Diagram
 	{
 		width_ = sizeX;
 		height_ = sizeY;
+		
+		createCellsList();
+	}
+	
+	public Diagram()
+	{
+		createCellsList();
+	}
+
+	private void createCellsList() {
 		cellsList_ = new ArrayList<Cell>();
 	}
 
-	public void setDiagramSize(int x, int y)
+	private void setDiagramSize(int x, int y)
 	{
 		this.clear();
-		width_ = x;
-		height_ = y;
+		
+		width_ 	= x;
+		height_	= y;
 	}
 	
 	public void generate( int cellsCount )
@@ -754,6 +766,57 @@ public class Diagram
 		DISTANZA_MIN = 5;
 	}
 
+	public String[] toStringArray()
+	{
+		int idx = 0;
+		
+		String[] cells = new String[ cellsList_.size() + 1 ];
+		cells[idx++] = width_ + "|" + height_; // put size
+		
+		for( Cell cell: cellsList_ )
+		{
+			PointF kernel = cell.getKernel();
+			float x = kernel.x;
+			float y = kernel.y;
+			cells[idx++] = x + "|" + y;
+		}
+		
+		return cells;
+	}
+	
+	public void fromStringArray( String[] cells )
+	{
+		boolean readSize = false;
+		
+		for( String cell: cells )
+		{
+			StringTokenizer separator = new StringTokenizer(cell, "|");
+			try
+			{
+				float x 	= Float.parseFloat(separator.nextToken());
+				float y 	= Float.parseFloat(separator.nextToken());
+				
+				if( ! readSize )
+				{
+					setDiagramSize( (int)x, (int)y );
+					readSize = true;
+					continue;
+				}
+				PointF pos 	= new PointF(x, y);
+				
+				this.addCell( new Cell(pos) );
+			}
+			catch(NumberFormatException ec)
+			{
+				//questo va gestito!!!
+			}
+			catch(NoSuchElementException ecc)
+			{
+				//questo va gestito!!!
+			}
+		}
+	}
+	
 	//Metodi per il savetaggio dei punti
 	public void save(FileWriter file) throws IOException                                                   
 	{
@@ -841,7 +904,7 @@ public class Diagram
 
 	private ArrayList<Cell> cellsList_;
 	private static  int DISTANZA_MIN = 5; // Distanza minima tra due siti
-	private int width_, height_;
+	private int width_ = 0, height_ = 0;
 	private static final double EPSI = 1E-14;
 	private int yyy;
 
