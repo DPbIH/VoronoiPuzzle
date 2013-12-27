@@ -19,7 +19,18 @@ public class Tile
 	private static final int rotationRatio_ = 90;
 	private static final int fullRound_		= 360;
 	private ArrayList<PointF> vertexes_;
+	private boolean isHighlighted_			= false;
 
+	public void setHighlighted( boolean val )
+	{
+		isHighlighted_ = val;
+	}
+	
+	public boolean isHighlighted()
+	{
+		return isHighlighted_;
+	}
+	
 	public Bitmap getBitmap()
 	{
 		return bmp_;
