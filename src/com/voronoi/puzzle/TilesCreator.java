@@ -11,6 +11,8 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.voronoi.puzzle.diagramimpl.Cell;
 import com.voronoi.puzzle.diagramimpl.Diagram;
@@ -25,7 +27,7 @@ public class TilesCreator
 		{
 			return null;
 		}
-		
+
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
 
 		Bitmap scaledBmp = getScaledBitmap( bmp, (int)diagram.getWidth(), (int)diagram.getHeight() );
@@ -56,24 +58,32 @@ public class TilesCreator
 		int cellHeight 		= (int)(bottomright.y - topleft.y);
 
 		Path mask 			= getCellPoly( cell );
-		Bitmap sliceBmp 	= Bitmap.createBitmap( cellWidth, cellHeight, Config.ARGB_8888);
+		Bitmap sliceBmp 	= Bitmap.createBitmap( bmp.getWidth(), bmp.getHeight(), Config.ARGB_8888 );
+		Canvas canvas 		= new Canvas( sliceBmp );
+		final int color		= 0xff424242;
+		Paint paint 		= new Paint();
+		Rect rect 			= new Rect( 
+				(int)topleft.x, (int)topleft.y, 
+				(int)bottomright.x, (int)bottomright.y );
 
-		Canvas mCanvas 		= new Canvas( sliceBmp );
-		Paint paint 		= new Paint(Paint.ANTI_ALIAS_FLAG);
-
-		mCanvas.drawPath( mask, paint);
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
+		canvas.drawPath(mask, paint);
 		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-		mCanvas.drawBitmap( bmp, 0, 0, null );
+		canvas.drawBitmap(bmp, rect, rect, paint);
 
-		return sliceBmp;
+		return Bitmap.createBitmap( 
+				sliceBmp, (int)topleft.x, 
+				(int)topleft.y, cellWidth, cellHeight );
 	}
 
 	private ArrayList<PointF> getCellVertexesWithRelativeCoordinates( Cell cell )
 	{
 		ArrayList<PointF> vertexes = new ArrayList<PointF>();
-		
+
 		PointF posTopLeft = cell.TopLeft();
-		
+
 		Iterator<PointF> vertexesIt = cell.getVertexes().iterator();
 		while( vertexesIt.hasNext() )
 		{
@@ -82,13 +92,13 @@ public class TilesCreator
 					nextVertex.x - posTopLeft.x,
 					nextVertex.y - posTopLeft.y 
 					);
-			
+
 			vertexes.add( vertexWithRelativeCoordinates ); 
 		}
-		
+
 		return vertexes;
 	}
-	
+
 	private Path getCellPoly( Cell cell )
 	{
 		Path poly = new Path();
@@ -98,7 +108,7 @@ public class TilesCreator
 			PointF firstVertex = it.next();
 			poly.moveTo( firstVertex.x, firstVertex.y );
 		}
-		
+
 		while( it.hasNext() )
 		{
 			PointF nextVertex = it.next();

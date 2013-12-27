@@ -89,7 +89,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		String[] diagramStrings	= editor_.getDiagram().toStringArray();
 		
 		ByteArrayOutputStream bs = new ByteArrayOutputStream();
-		editor_.getImage().compress(Bitmap.CompressFormat.JPEG, 0, bs);
+		editor_.getImage().compress(Bitmap.CompressFormat.JPEG, 30, bs);
 		
 		Intent intent = new Intent(this, GamePlay.class);
 		intent.putExtra( GlobalConstants.DIAGRAM_STRING_EXTRA , diagramStrings );
