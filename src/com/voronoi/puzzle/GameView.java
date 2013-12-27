@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import com.voronoi.puzzle.diagramimpl.Diagram;
 import com.voronoi.puzzle.puzzleimpl.Board;
 import com.voronoi.puzzle.puzzleimpl.Tile;
+import com.voronoi.puzzle.puzzleimpl.TileHandler;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -19,7 +22,13 @@ public class GameView extends View
 	public GameView(Context context, AttributeSet attrs) 
 	{
 		super(context, attrs);
+		
+		init();
+	}
 
+	private void init() 
+	{
+		tilePaint_ = new Paint( Paint.ANTI_ALIAS_FLAG );
 	}
 
 	@Override
@@ -39,6 +48,26 @@ public class GameView extends View
 	protected void onDraw(Canvas canvas)
 	{
 		super.onDraw(canvas);
+
+		drawTiles( canvas );
+	}
+
+	private void drawTiles( Canvas canvas )
+	{
+		for( Tile tile: board_.getTiles() )
+		{
+			drawTile( canvas, tile );
+		}
+		
+	}
+
+	private void drawTile(Canvas canvas, Tile tile)
+	{
+		canvas.drawBitmap( 
+				tile.getBitmap(), 
+				tile.getCurrentPos().x,
+				tile.getCurrentPos().y,
+				tilePaint_ );
 	}
 
 	@Override
@@ -66,20 +95,48 @@ public class GameView extends View
 		return true; 
 	}
 
+	private PointF toBoardPos( PointF viewPos )
+	{
+		return viewPos;
+	}
+	
 	public void onTouchPressed(MotionEvent event)
-	{	
+	{
+		selectedTile_ = board_.getTileAtPos( toBoardPos( new PointF( event.getX(), event.getY() ) ) );
+		if( selectedTile_ == null )
+		{
+			return;
+		}
+		
+		selectedTile_.setHighlighted( true );
+		
 		invalidate();
 	}
 
 
 	public void onTouchDragged(MotionEvent event)
 	{
+		if( selectedTile_ == null )
+		{
+			return;
+		}
+		
+		PointF boardPos = toBoardPos( new PointF( event.getX(), event.getY() ) );
+		
+		selectedTile_.Move( boardPos );
+		
 		invalidate();
 	}
 
 	public void onTouchReleased(MotionEvent event)
 	{
-
+		if( selectedTile_ == null )
+		{
+			return;
+		}
+		
+		selectedTile_.setHighlighted( false );
+		
 		invalidate();
 	}
 
@@ -91,13 +148,6 @@ public class GameView extends View
 	public void setDiagram( Diagram diagram )
 	{
 		this.diagram_ = diagram;
-
-		float scale_ratio = getScaleRatio( getWidth(), getHeight(),
-				(int)diagram_.getWidth(), (int)diagram_.getHeight() );
-
-		diagram_.scale( scale_ratio );
-
-		invalidate();
 	}
 	
 	public Bitmap getImage()
@@ -107,27 +157,35 @@ public class GameView extends View
 	
 	public void setImage( Bitmap bmp )
 	{
-		float scale_ratio = getScaleRatio( getWidth(), getHeight(),
-				bmp.getWidth(), bmp.getHeight() );
-
-		image_ = Bitmap.createScaledBitmap( 
-				bmp,
-				(int)(bmp.getWidth() * scale_ratio), 
-				(int)(bmp.getHeight() * scale_ratio),
-				true);
-
-		invalidate();
+		image_ = bmp;
 	}
-
-	private float getScaleRatio( int maxX, int maxY, int x, int y )
+	
+	public void addTile( Tile tile )
 	{
-		return Math.min( (float) maxX / x, (float) maxY / y );
+		board_.addTile(tile);
 	}
+	
+	public void removeTile( Tile tile )
+	{
+		board_.removeTile(tile);
+	}
+	
+	/*public void createTiles()
+	{
+		tiles_.clear();
+		
+		if( (image_ == null) || (diagram_ == null) )
+		{
+			return;
+		}
+		
+		TilesCreator tc = new TilesCreator();
+		tiles_ = tc.getTiles(diagram_, image_);
+	}*/
 
 	public void reinit()
 	{
 		clearBoard();
-
 	}
 
 	private void clearBoard()
@@ -145,5 +203,8 @@ public class GameView extends View
 	private Bitmap 			image_		= null;
 	private Board			board_ 		= new Board();
 	private ArrayList<Tile>	tiles_ 		= new ArrayList<Tile>();
+	private Tile			selectedTile_;
+	
+	private Paint 			tilePaint_ 	= null;
 
 }

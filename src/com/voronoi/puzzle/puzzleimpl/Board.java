@@ -99,7 +99,7 @@ public class Board
 		return tiles_.contains( tile );
 	}
 	
-	private ArrayList<Tile> tiles_;
+	private ArrayList<Tile> tiles_ = new ArrayList<Tile>();
 	
 	private float width_ 	= 0;
 	private float height_ 	= 0;

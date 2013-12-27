@@ -1,5 +1,6 @@
 package com.voronoi.puzzle;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.Random;
 
 
 
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -83,7 +86,15 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 	public void startGamePlay(View view) 
 	{
+		String[] diagramStrings	= editor_.getDiagram().toStringArray();
+		
+		ByteArrayOutputStream bs = new ByteArrayOutputStream();
+		editor_.getImage().compress(Bitmap.CompressFormat.JPEG, 0, bs);
+		
 		Intent intent = new Intent(this, GamePlay.class);
+		intent.putExtra( GlobalConstants.DIAGRAM_STRING_EXTRA , diagramStrings );
+		intent.putExtra( GlobalConstants.PUZZLE_IMAGE_EXTRA, bs.toByteArray() );
+		
 		startActivity(intent);
 	}
 

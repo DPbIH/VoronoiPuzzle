@@ -63,7 +63,7 @@ public class EditorView extends View
 	
 	protected void onSizeChanged (int w, int h, int oldw, int oldh)
 	{
-		diagram_.setDiagramSize(w, h);
+		diagram_.scale(w, h);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -195,6 +195,11 @@ public class EditorView extends View
 		invalidate();
 	}
 	
+	public Bitmap getImage()
+	{
+		return bgImg_.getBitmap();
+	}
+	
 	public void reset()
 	{
 		diagram_.clear();
@@ -260,6 +265,11 @@ public class EditorView extends View
 	{
 		Cell cell = newCell;
 		diagram_.addCell(cell);
+	}
+	
+	public Diagram getDiagram()
+	{
+		return diagram_;
 	}
 
 	private Diagram 		diagram_;
