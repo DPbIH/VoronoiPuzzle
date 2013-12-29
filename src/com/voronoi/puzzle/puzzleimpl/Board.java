@@ -1,6 +1,7 @@
 package com.voronoi.puzzle.puzzleimpl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.graphics.PointF;
 
@@ -36,15 +37,16 @@ public class Board
 	{
 		Tile seekedTile = null;
 		
-		for (Tile tile : tiles_)
+		for ( int idx = tiles_.size() - 1; idx >=0; --idx )
 		{
+			Tile tile = tiles_.get(idx);
 			if( tile.contains( pos ) )
 			{
 				seekedTile = tile;
 				break;
 			}
 		}
-		
+				
 		return seekedTile;
 	}
 
@@ -97,6 +99,12 @@ public class Board
 	public boolean containsTile( Tile tile )
 	{
 		return tiles_.contains( tile );
+	}
+	
+	public void onTileSelected( Tile tile )
+	{
+		tiles_.remove( tile );
+		tiles_.add( tile );
 	}
 	
 	private ArrayList<Tile> tiles_ = new ArrayList<Tile>();

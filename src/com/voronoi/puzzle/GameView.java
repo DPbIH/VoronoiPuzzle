@@ -147,6 +147,11 @@ public class GameView extends View
 
 	private void drawTile(Canvas canvas, Tile tile)
 	{
+		if( tile == null )
+		{
+			return;
+		}
+		
 		Bitmap tileBmp = tile.getBitmap();
 		
 		if ( tile.IsRotated() )
@@ -212,6 +217,8 @@ public class GameView extends View
 		{
 			return;
 		}
+		
+		board_.onTileSelected( selectedTile_ );
 		
 		moveCalculator_.setTileStartPos( selectedTile_.getCurrentPos() );
 		moveCalculator_.setFingerPressedPos( boardPos );
