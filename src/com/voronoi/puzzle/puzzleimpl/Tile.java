@@ -20,6 +20,7 @@ public class Tile
 	private static final int fullRound_		= 360;
 	private ArrayList<PointF> vertexes_;
 	private boolean isHighlighted_			= false;
+	private boolean pinned_					= false;
 
 	public void setHighlighted( boolean val )
 	{
@@ -78,6 +79,11 @@ public class Tile
 
 	public void Move( PointF newPos )
 	{
+		if( pinned_ )
+		{
+			return;
+		}
+		
 		currentPos_ = newPos;
 	}
 
@@ -123,6 +129,30 @@ public class Tile
 		Region regionOther = getRegionForPath( other.getPathFromVertexes() );
 		
 		return region.op( regionOther, Region.Op.INTERSECT ); 
+	}
+	
+	public float DistanceToTarget()
+	{
+		float distance = (float)Math.sqrt(
+				Math.pow(targetPos_.x-currentPos_.x, 2) + 
+				Math.pow(targetPos_.y-currentPos_.y, 2) );
+		
+		return distance;
+	}
+	
+	public void MoveToTarget()
+	{
+		Move( getTargetPos() );
+	}
+	
+	public void Pin()
+	{
+		pinned_ = true;
+	}
+	
+	public void Unpin()
+	{
+		pinned_ = false;
 	}
 	
 	private Path getPathFromVertexes() 

@@ -223,14 +223,26 @@ public class GameView extends View
 
 	public void onTouchDragged(MotionEvent event)
 	{
-		if( selectedTile_ != null )
+		if( selectedTile_ == null )
 		{
-			PointF fingerPos = new PointF( event.getX(), event.getY() );
-			
-			selectedTile_.Move( moveCalculator_.getTileNewPos( toBoardPos( fingerPos ) ) );
-			
-			invalidate();
+			return;
 		}
+		
+		PointF fingerPos = new PointF( event.getX(), event.getY() );
+
+		selectedTile_.Move( moveCalculator_.getTileNewPos( toBoardPos( fingerPos ) ) );
+		if( selectedTile_.DistanceToTarget() < 10 )
+		{
+			selectedTile_.MoveToTarget();
+			selectedTile_.Pin();
+		}
+		
+		if( selectedTile_.IsOnTargetPos() )
+		{
+			// NotifyTileTargeted( selectedTile_ );
+		}
+
+		invalidate();
 	}
 
 	public void onTouchReleased(MotionEvent event)
