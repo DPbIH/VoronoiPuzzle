@@ -89,6 +89,16 @@ public class Tile
 			rotationAngle_ = 0;
 		}
 	}
+	
+	public boolean IsRotated()
+	{
+		return ( rotationAngle_ != 0 );
+	}
+	
+	public int GetRotationAngle()
+	{
+		return rotationAngle_;
+	}
 
 	public ArrayList<PointF> getVertexes()
 	{

@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ToggleButton;
 
 public class GamePlay extends Activity {
 
@@ -91,4 +93,21 @@ public class GamePlay extends Activity {
 	    return super.onKeyDown(keyCode, event);
 	}
 
+	public void enableHintImage(View view) 
+	{
+		boolean on = ((ToggleButton)view).isChecked();
+		gameView_.showImage( on ? GameView.ImageMonochrome : GameView.ImageNone );
+	}
+	
+	public void enableHintGrid(View view)
+	{
+		boolean on = ((ToggleButton)view).isChecked();
+		gameView_.showDiagram( on );
+	}
+	
+	public void enableHintIndex(View view) 
+	{
+		boolean on = ((ToggleButton)view).isChecked();
+		gameView_.showTilesNumbers( on );
+	}
 }
