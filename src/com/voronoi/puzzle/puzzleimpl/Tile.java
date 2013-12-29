@@ -155,7 +155,7 @@ public class Tile
 		pinned_ = false;
 	}
 	
-	private Path getPathFromVertexes() 
+	public Path getPathFromVertexes() 
 	{
 		Path path = new Path();
 		

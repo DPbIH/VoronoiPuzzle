@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -47,9 +48,19 @@ public class GameView extends View
 
 	private void initPaints() 
 	{
-		tilePaint_ 		= new Paint( Paint.ANTI_ALIAS_FLAG );
-		cellPaint_   	= new Paint(Paint.ANTI_ALIAS_FLAG);		
-		cellPaint_.setColor( getResources().getColor(R.color.translucent_orange) );
+		tilePaint_	= new Paint( Paint.ANTI_ALIAS_FLAG );
+		tilePaint_.setColor( getResources().getColor(R.color.black) );
+		tilePaint_.setStrokeWidth( 3 );
+		tilePaint_.setPathEffect(new DashPathEffect(new float[] {10,5}, 0));
+		tilePaint_.setStyle(Style.STROKE);
+		
+		tileHighlightedPaint_	= new Paint( Paint.ANTI_ALIAS_FLAG );
+		tileHighlightedPaint_.setColor( getResources().getColor(R.color.orange) );
+		tileHighlightedPaint_.setStrokeWidth( 4 );
+		tileHighlightedPaint_.setStyle(Style.STROKE);
+		
+		cellPaint_	= new Paint(Paint.ANTI_ALIAS_FLAG);		
+		cellPaint_.setColor( getResources().getColor(R.color.black) );
 		cellPaint_.setStrokeWidth( 3 );
 		cellPaint_.setStyle(Style.STROKE);
 	}
@@ -158,11 +169,17 @@ public class GameView extends View
 		{
 			tileBmp = rotateBitmap( tileBmp, tile.GetRotationAngle() );
 		}
+		
 		canvas.drawBitmap( 
 				tileBmp, 
 				tile.getCurrentPos().x,
 				tile.getCurrentPos().y,
 				tilePaint_ );
+		
+		if( ! tile.IsOnTargetPos() )
+		{
+			canvas.drawPath( tile.getPathFromVertexes(), tile.isHighlighted() ? tileHighlightedPaint_ : tilePaint_ );
+		}
 	}
 	
 	public Bitmap rotateBitmap(Bitmap source, float angle)
@@ -435,11 +452,12 @@ public class GameView extends View
 	private BitmapDrawable 			bgImgMono_;
 	private boolean 				showDiagram_ 		= false;
 	private boolean 				showTilesNumbers_	= false;
-	private Diagram 				diagram_			= null;
+	private Diagram 				diagram_;
 	private Board					board_ 				= new Board();
-	private Tile					selectedTile_ 		= null;
+	private Tile					selectedTile_;
 	
-	private Paint 					cellPaint_ 			= null;
-	private Paint 					tilePaint_ 			= null;
+	private Paint 					cellPaint_;
+	private Paint 					tilePaint_;
+	private Paint 					tileHighlightedPaint_;
 	
 }
