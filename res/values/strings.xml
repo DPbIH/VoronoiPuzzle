@@ -20,5 +20,13 @@
     <string name="createPuzzle">Create</string>
     <string name="resetEditor">Reset</string>
     <string name="randomize">Random</string>
+    <string name="imageON">Image ON</string>
+    <string name="imageOFF">Image OFF</string>
+    <string name="imageColor">Colored</string>
+    <string name="imageMono">Monochromatic</string>
+    <string name="gridON">Grid ON</string>
+    <string name="gridOFF">Grid OFF</string>
+    <string name="indexON">Index ON</string>
+    <string name="indexOFF">Index OFF</string>
 
 </resources>

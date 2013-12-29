@@ -5,5 +5,7 @@
     <color name="black">#000000</color>
     <color name="orange">#FFA500</color>
     <color name="white">#FFFFFF</color>
+    <color name="translucent_orange">#50FFA500</color>
+    <color name="beige">#f9fad9</color>
     
 </resources>

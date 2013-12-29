@@ -36,11 +36,13 @@ public class EditorView extends View
 		initPaints();
 	}
 
-	private void initDiagram() {
+	private void initDiagram()
+	{
 		diagram_ = new Diagram( this.getWidth(), this.getHeight() );
 	}
 
-	private void initPaints() {
+	private void initPaints()
+	{
 		cellPaint_   = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		

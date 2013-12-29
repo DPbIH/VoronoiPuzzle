@@ -78,7 +78,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		}
 	}
 	
-	public void loadImage(View view) 
+	public void loadImage(View view)
 	{
 		ImageSelectorDialog imageSelector = new ImageSelectorDialog();
 		imageSelector.show( getFragmentManager(), "dialog" );

@@ -20,21 +20,31 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:text="ToggleButton" />
+            android:width="60dp"
+            android:textOff="@string/imageOFF"
+            android:textOn="@string/imageON"
+            android:onClick="enableHintImage" />
 
         <ToggleButton
             android:id="@+id/showGridBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="ToggleButton" />
+            android:width="60dp"
+            android:textOff="@string/gridOFF"
+            android:textOn="@string/gridON"
+            android:onClick="enableHintGrid" />
 
         <ToggleButton
             android:id="@+id/showNumbersBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="ToggleButton" />
+            android:width="60dp"
+            android:textOff="@string/indexOFF"
+            android:textOn="@string/indexON"
+            android:onClick="enableHintIndex" />
+        
     </LinearLayout>
 
     <SlidingDrawer
@@ -72,8 +82,10 @@
         android:id="@+id/gameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@id/hintsLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_margin="10dp"
-        android:background="@color/translucent_black" />
+        android:layout_toLeftOf="@id/hintsLayout"
+        android:background="@color/beige" />
 
 </RelativeLayout>
