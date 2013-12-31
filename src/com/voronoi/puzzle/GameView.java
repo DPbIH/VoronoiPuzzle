@@ -1,35 +1,29 @@
 package com.voronoi.puzzle;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import com.voronoi.puzzle.diagramimpl.Cell;
 import com.voronoi.puzzle.diagramimpl.Diagram;
 import com.voronoi.puzzle.puzzleimpl.Board;
 import com.voronoi.puzzle.puzzleimpl.Tile;
-import com.voronoi.puzzle.puzzleimpl.TileHandler;
-
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Paint.Style;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 public class GameView extends View
 {
@@ -163,15 +157,8 @@ public class GameView extends View
 			return;
 		}
 		
-		Bitmap tileBmp = tile.getBitmap();
-		
-		if ( tile.IsRotated() )
-		{
-			tileBmp = rotateBitmap( tileBmp, tile.GetRotationAngle() );
-		}
-		
 		canvas.drawBitmap( 
-				tileBmp, 
+				tile.getBitmap(), 
 				tile.getCurrentPos().x,
 				tile.getCurrentPos().y,
 				tilePaint_ );
@@ -180,14 +167,6 @@ public class GameView extends View
 		{
 			canvas.drawPath( tile.getPathFromVertexes(), tile.isHighlighted() ? tileHighlightedPaint_ : tilePaint_ );
 		}
-	}
-	
-	public Bitmap rotateBitmap(Bitmap source, float angle)
-	{
-	      Matrix matrix = new Matrix();
-	      matrix.postRotate(angle);
-	      
-	      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
 	}
 
 	@Override

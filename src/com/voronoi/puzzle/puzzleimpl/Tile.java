@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -34,7 +35,7 @@ public class Tile
 	
 	public Bitmap getBitmap()
 	{
-		return bmp_;
+		return IsRotated() ? rotateBitmap( bmp_, rotationAngle_ ) : bmp_;
 	}
 
 	public void setBitmap(Bitmap bmp)
@@ -156,23 +157,35 @@ public class Tile
 	}
 	
 	public Path getPathFromVertexes() 
-	{
+	{	
 		Path path = new Path();
 		
 		Iterator<PointF> it = vertexes_.iterator();
 		if( it.hasNext() )
 		{
 			PointF firstVertex = it.next();
-			path.moveTo( firstVertex.x + currentPos_.x, firstVertex.y + currentPos_.y );
+			path.moveTo( firstVertex.x, firstVertex.y );
 		}
 		
 		while( it.hasNext() )
 		{
 			PointF nextVertex = it.next();
-			path.lineTo( nextVertex.x + currentPos_.x, nextVertex.y + currentPos_.y );
+			path.lineTo( nextVertex.x, nextVertex.y );
 		}
 		
 		path.close();
+		
+		if( IsRotated() )
+		{
+			path = rotatePath( path, rotationAngle_ );
+		}
+		
+		//now. move path to current position
+		RectF bounds = new RectF();
+		path.computeBounds(bounds, true);
+		float dx = (float)Math.sqrt(Math.pow( currentPos_.x - bounds.left, 2) );
+		float dy = (float)Math.sqrt(Math.pow( currentPos_.y - bounds.top, 2) );
+		path.offset(dx, dy);
 		
 		return path;
 	}
@@ -180,11 +193,35 @@ public class Tile
 	private Region getRegionForPath( Path path )
 	{
 		Region region	= new Region();
-		RectF rectF 	= new RectF();
-		path.computeBounds(rectF, true);
-		region.setPath( path, new Region( (int)rectF.left, (int)rectF.top, (int)rectF.right, (int)rectF.bottom) );
+		RectF bounds 	= new RectF();
+		path.computeBounds(bounds, true);
+		region.setPath( path, new Region( (int)bounds.left, (int)bounds.top, (int)bounds.right, (int)bounds.bottom) );
 		
 		return region;
+	}
+	
+	private static Bitmap rotateBitmap(Bitmap source, float angle)
+	{
+	      Matrix matrix = new Matrix();
+	      matrix.postRotate(angle);
+	      
+	      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+	}
+	
+	private static Path rotatePath( Path source, float angle )
+	{
+		Path rotatedPath = new Path( source );
+		RectF bounds = new RectF();
+		rotatedPath.computeBounds(bounds, true);
+
+		Matrix matrix = new Matrix();
+		matrix.postRotate(angle, 
+				(bounds.left + bounds.right)/2,
+				(bounds.top + bounds.bottom)/2 );
+		
+		rotatedPath.transform(matrix);
+
+		return rotatedPath;
 	}
 
 }
