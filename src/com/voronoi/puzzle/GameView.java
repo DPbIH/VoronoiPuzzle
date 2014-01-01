@@ -107,10 +107,21 @@ public class GameView extends View
 	}
 
 	private void drawTiles( Canvas canvas )
-	{	
+	{
 		for( Tile tile: board_.getTiles() )
 		{
-			drawTile( canvas, tile );
+			if( tile.IsOnTargetPos() )
+			{
+				drawTile( canvas, tile );
+			}
+		}
+		
+		for( Tile tile: board_.getTiles() )
+		{
+			if( ! tile.IsOnTargetPos() )
+			{
+				drawTile( canvas, tile );
+			}
 		}
 	}
 	
