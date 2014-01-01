@@ -115,12 +115,12 @@ public class Border
 		return (cella2 == null);
 	}
 
-	public PointF getPuntoUno()
+	public PointF getPointFirst()
 	{
 		return p1;
 	}
 
-	public PointF getPuntoDue()
+	public PointF getPointSecond()
 	{
 		return p2;
 	}

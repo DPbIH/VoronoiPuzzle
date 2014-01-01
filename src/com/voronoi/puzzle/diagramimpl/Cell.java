@@ -8,20 +8,20 @@ public class Cell implements Cloneable
 {
 	public  Cell(float x, float y)
 	{
-		border = new ArrayList<Border>();
-		side = new PointF(x, y);
+		borders_ = new ArrayList<Border>();
+		kernel_ = new PointF(x, y);
 	}
 	
 	public Cell(PointF unPunto)
 	{
-		border = new ArrayList<Border>();
-		side = unPunto;
+		borders_ = new ArrayList<Border>();
+		kernel_ = unPunto;
 	}
 
 	public Cell(PointF unPunto, boolean col)
 	{
-		border = new ArrayList<Border>();
-		side = unPunto;
+		borders_ = new ArrayList<Border>();
+		kernel_ = unPunto;
 		this.colore = col;
 	}
 	
@@ -109,40 +109,37 @@ public class Cell implements Cloneable
 	
 	public ArrayList<PointF> getVertexes()
 	{   
-		Border front;
-		ArrayList<PointF>  listaPunti = new ArrayList<PointF> ();
-		Iterator<Border> listaElementi = border.iterator();
-		while(listaElementi.hasNext())
+		ArrayList<PointF>  vertexes = new ArrayList<PointF> ();
+		
+		Iterator<Border> bordersIter = borders_.iterator();
+		while(bordersIter.hasNext())
 		{
-			front= (Border)listaElementi.next();
-			PointF puntoUno = front.getPuntoUno();
-			PointF puntoDue = front.getPuntoDue();
+			Border border= (Border)bordersIter.next();
+			PointF point1st = border.getPointFirst();
+			PointF point2nd = border.getPointSecond();
 
-			if(!(listaPunti.contains(puntoUno)))
+			if(!(vertexes.contains(point1st)))
 			{
-				listaPunti.add(puntoUno);
+				vertexes.add(point1st);
 			} 
-			if(!(listaPunti.contains(puntoDue)))
+			if(!(vertexes.contains(point2nd)))
 			{
-				listaPunti.add(puntoDue);
+				vertexes.add(point2nd);
 			}
 
-			class ConfrontaAngoli implements Comparator<Object>
+			class VertexesComparator implements Comparator<PointF>
 			{
-				public int compare(Object a, Object b)
+				public int compare(PointF lhs, PointF rhs)
 				{
-					PointF puntoA =  (PointF)a;
-					PointF puntoB =  (PointF)b;
-
-					if(getAngle(puntoA, side) < getAngle(puntoB, side)){return -1;}
-					if(areEqual(getAngle(puntoA, side), getAngle(puntoB, side))){return 0;}
+					if(getAngle(lhs, kernel_) < getAngle(rhs, kernel_)){return -1;}
+					if(areEqual(getAngle(lhs, kernel_), getAngle(rhs, kernel_))){return 0;}
 					return 1;
 				}
 			}
 
-			Collections.sort(listaPunti, new ConfrontaAngoli() );
+			Collections.sort(vertexes, new VertexesComparator() );
 		}
-		return listaPunti;
+		return vertexes;
 	}
 
 	private float getAngle(PointF p1, PointF p2)
@@ -173,19 +170,19 @@ public class Cell implements Cloneable
 		}
 	}
 
-	public ArrayList<Border> getVfrontiere()
+	public ArrayList<Border> getBorders()
 	{
-		return  border;
+		return  borders_;
 	}
 
 	public Iterator<Border> getBordersIt()
 	{
-		return border.iterator();
+		return borders_.iterator();
 	}
 
 	public PointF getKernel()
 	{
-		return side;
+		return kernel_;
 	}
 
 	private boolean areEqual(PointF pointUno, PointF pointDue)
@@ -234,21 +231,24 @@ public class Cell implements Cloneable
 
 	public Object clone()
 	{
-		Cell clonata  = null;
+		Cell clone  = null;
 		try
 		{
-			clonata = (Cell)super.clone();
-			clonata.setColore(this.colore);
+			clone = (Cell)super.clone();
+			clone.setColore(this.colore);
 		}
-		catch(CloneNotSupportedException e){e.printStackTrace();}
+		catch(CloneNotSupportedException e)
+		{
+			e.printStackTrace();
+		}
 
 
-		return clonata;
+		return clone;
 	}
 
 
-	private ArrayList<Border> border;
-	private PointF side;
+	private ArrayList<Border> borders_;
+	private PointF kernel_;
 	private static final double EPS = 1E-13;
 	private boolean colore = false;
 }

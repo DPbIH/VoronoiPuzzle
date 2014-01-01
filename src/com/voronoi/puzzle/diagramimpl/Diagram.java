@@ -185,15 +185,15 @@ public class Diagram
 			addBorder(nextCell, newBorder); 
 
 
-			if( GetDistance( nextCell.getKernel(), border1.getPuntoUno() ) < 
-					GetDistance( newCell.getKernel(), border1.getPuntoUno() ) )
+			if( GetDistance( nextCell.getKernel(), border1.getPointFirst() ) < 
+					GetDistance( newCell.getKernel(), border1.getPointFirst() ) )
 			{
-				limit = border1.getPuntoDue();
+				limit = border1.getPointSecond();
 				border1.setPuntoDue(point1);
 			}
 			else
 			{
-				limit = border1.getPuntoUno();
+				limit = border1.getPointFirst();
 				border1.setPuntoUno(point1);
 			}
 
@@ -217,8 +217,8 @@ public class Diagram
 
 				// Scorre sui punti frontiera della cella e verifica
 				// se sono stati aggiornati, eventualmente gli elimina.
-				if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) <
-						GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
+				if( GetDistance( border.getPointFirst(), newCell.getKernel() ) <
+						GetDistance( border.getPointFirst(), nextCell.getKernel() ) )
 				{
 					oldFront.add(border);
 					if(border.isEdge())
@@ -269,15 +269,15 @@ public class Diagram
 				this.addBorder(newCell, newBorder);
 				this.addBorder(nextCell, newBorder);
 
-				if( GetDistance( nextCell.getKernel(), border3.getPuntoUno() ) < 
-						GetDistance( newCell.getKernel(), border3.getPuntoUno() ) )
+				if( GetDistance( nextCell.getKernel(), border3.getPointFirst() ) < 
+						GetDistance( newCell.getKernel(), border3.getPointFirst() ) )
 				{
-					limit = border3.getPuntoDue();
+					limit = border3.getPointSecond();
 					border3.setPuntoDue(point3);
 				}
 				else
 				{
-					limit = border3.getPuntoUno();
+					limit = border3.getPointFirst();
 					border3.setPuntoUno(point3);
 				}
 
@@ -303,8 +303,8 @@ public class Diagram
 					// vicino alla nuova cella(quella entrante o corrente) che
 					// alla cella alla quale appartenevano  vuol dire che non le 
 					// appartengono più!
-					if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) < 
-							GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
+					if( GetDistance( border.getPointFirst(), newCell.getKernel() ) < 
+							GetDistance( border.getPointFirst(), nextCell.getKernel() ) )
 					{
 						oldFront.add(border);
 
@@ -337,15 +337,15 @@ public class Diagram
 			nextCell = cell2;
 			if(!loop)
 			{
-				if( GetDistance( nextCell.getKernel(), border2.getPuntoUno() ) <
-						GetDistance( newCell.getKernel(), border2.getPuntoUno() ) )
+				if( GetDistance( nextCell.getKernel(), border2.getPointFirst() ) <
+						GetDistance( newCell.getKernel(), border2.getPointFirst() ) )
 				{
-					limit = border2.getPuntoDue();
+					limit = border2.getPointSecond();
 					border2.setPuntoDue(point2);
 				}
 				else
 				{
-					limit = border2.getPuntoUno();
+					limit = border2.getPointFirst();
 					border2.setPuntoUno(point2);
 				}
 
@@ -389,15 +389,15 @@ public class Diagram
 					this.addBorder(newCell, newBorder);
 					this.addBorder(nextCell, newBorder);
 
-					if( GetDistance( nextCell.getKernel(), border3.getPuntoUno() ) < 
-							GetDistance( newCell.getKernel(), border3.getPuntoUno() ) )
+					if( GetDistance( nextCell.getKernel(), border3.getPointFirst() ) < 
+							GetDistance( newCell.getKernel(), border3.getPointFirst() ) )
 					{
-						limit = border3.getPuntoDue();
+						limit = border3.getPointSecond();
 						border3.setPuntoDue(point3);
 					}
 					else
 					{
-						limit = border3.getPuntoUno();
+						limit = border3.getPointFirst();
 						border3.setPuntoUno(point3);
 					}
 
@@ -419,8 +419,8 @@ public class Diagram
 							continue;
 
 
-						if( GetDistance( border.getPuntoUno(), newCell.getKernel() ) < 
-								GetDistance( border.getPuntoUno(), nextCell.getKernel() ) )
+						if( GetDistance( border.getPointFirst(), newCell.getKernel() ) < 
+								GetDistance( border.getPointFirst(), nextCell.getKernel() ) )
 						{
 							oldFront.add(border);
 
@@ -454,31 +454,31 @@ public class Diagram
 			while(listaFrontiereCella.hasNext())
 			{            
 				border = (Border) listaFrontiereCella.next();
-				if(isEqual(border.getPuntoUno().x, width_) && 
-						isEqual(border.getPuntoDue().x, width_))
+				if(isEqual(border.getPointFirst().x, width_) && 
+						isEqual(border.getPointSecond().x, width_))
 				{
 					if(edge2)
 					{
-						point1 = border2.getPuntoUno();
-						point2 = border2.getPuntoUno();
+						point1 = border2.getPointFirst();
+						point2 = border2.getPointFirst();
 
-						if(point1.y < border2.getPuntoDue().y)
-							point1 = border2.getPuntoDue();
+						if(point1.y < border2.getPointSecond().y)
+							point1 = border2.getPointSecond();
 
-						if(point2.y > border2.getPuntoDue().y) 
-							point2 = border2.getPuntoDue();
+						if(point2.y > border2.getPointSecond().y) 
+							point2 = border2.getPointSecond();
 
-						if(point1.y < border.getPuntoUno().y) 
-							point1 = border.getPuntoUno();
+						if(point1.y < border.getPointFirst().y) 
+							point1 = border.getPointFirst();
 
-						if(point2.y > border.getPuntoUno().y) 
-							point2 = border.getPuntoUno();
+						if(point2.y > border.getPointFirst().y) 
+							point2 = border.getPointFirst();
 
-						if(point1.y < border.getPuntoDue().y)
-							point1 = border.getPuntoDue();
+						if(point1.y < border.getPointSecond().y)
+							point1 = border.getPointSecond();
 
-						if(point2.y > border.getPuntoDue().y) 
-							point2 = border.getPuntoDue();
+						if(point2.y > border.getPointSecond().y) 
+							point2 = border.getPointSecond();
 
 
 						border.setPuntoUno(point1);
@@ -494,32 +494,32 @@ public class Diagram
 					}
 				} 
 
-				if(isEqual(border.getPuntoUno().x, 0) &&
-						isEqual(border.getPuntoDue().x, 0))
+				if(isEqual(border.getPointFirst().x, 0) &&
+						isEqual(border.getPointSecond().x, 0))
 				{
 					if(edge4)
 					{
-						point1 = border4.getPuntoUno();
-						point2 = border4.getPuntoUno();
+						point1 = border4.getPointFirst();
+						point2 = border4.getPointFirst();
 
 
-						if(point1.y < border4.getPuntoDue().y)
-							point1 = border4.getPuntoDue();
+						if(point1.y < border4.getPointSecond().y)
+							point1 = border4.getPointSecond();
 
-						if(point2.y > border4.getPuntoDue().y) 
-							point2 = border4.getPuntoDue();
+						if(point2.y > border4.getPointSecond().y) 
+							point2 = border4.getPointSecond();
 
-						if(point1.y < border.getPuntoUno().y)
-							point1 = border.getPuntoUno();
+						if(point1.y < border.getPointFirst().y)
+							point1 = border.getPointFirst();
 
-						if(point2.y > border.getPuntoUno().y) 
-							point2 = border.getPuntoUno();
+						if(point2.y > border.getPointFirst().y) 
+							point2 = border.getPointFirst();
 
-						if(point1.y < border.getPuntoDue().y)
-							point1 = border.getPuntoDue();
+						if(point1.y < border.getPointSecond().y)
+							point1 = border.getPointSecond();
 
-						if(point2.y > border.getPuntoDue().y)
-							point2 = border.getPuntoDue();
+						if(point2.y > border.getPointSecond().y)
+							point2 = border.getPointSecond();
 
 
 						border.setPuntoUno(point1);
@@ -535,32 +535,32 @@ public class Diagram
 					}
 				}
 
-				if(isEqual(border.getPuntoUno().y,0)
-						&& isEqual(border.getPuntoDue().y, 0))
+				if(isEqual(border.getPointFirst().y,0)
+						&& isEqual(border.getPointSecond().y, 0))
 				{
 					if(edge1)
 					{
-						point1 = border1.getPuntoUno();
-						point2 = border1.getPuntoUno();
+						point1 = border1.getPointFirst();
+						point2 = border1.getPointFirst();
 
 
-						if(point1.x > border1.getPuntoDue().x)
-							point1 = border1.getPuntoDue();
+						if(point1.x > border1.getPointSecond().x)
+							point1 = border1.getPointSecond();
 
-						if(point2.x < border1.getPuntoDue().x) 
-							point2 = border1.getPuntoDue();
+						if(point2.x < border1.getPointSecond().x) 
+							point2 = border1.getPointSecond();
 
-						if(point1.x > border.getPuntoUno().x) 
-							point1 = border.getPuntoUno();
+						if(point1.x > border.getPointFirst().x) 
+							point1 = border.getPointFirst();
 
-						if(point2.x < border.getPuntoUno().x) 
-							point2 = border.getPuntoUno();
+						if(point2.x < border.getPointFirst().x) 
+							point2 = border.getPointFirst();
 
-						if(point1.x > border.getPuntoDue().x)
-							point1 = border.getPuntoDue();
+						if(point1.x > border.getPointSecond().x)
+							point1 = border.getPointSecond();
 
-						if(point2.x < border.getPuntoDue().x) 
-							point2 = border.getPuntoDue();
+						if(point2.x < border.getPointSecond().x) 
+							point2 = border.getPointSecond();
 
 
 						border.setPuntoUno(point1);
@@ -576,32 +576,32 @@ public class Diagram
 					}
 				} 
 
-				if(isEqual(border.getPuntoUno().y, height_) && 
-						isEqual(border.getPuntoDue().y, height_))
+				if(isEqual(border.getPointFirst().y, height_) && 
+						isEqual(border.getPointSecond().y, height_))
 				{
 					if(edge3)
 					{
-						point1 = border3.getPuntoUno();
-						point2 = border3.getPuntoUno();
+						point1 = border3.getPointFirst();
+						point2 = border3.getPointFirst();
 
 
-						if(point1.x > border3.getPuntoDue().x)
-							point1 = border3.getPuntoDue();
+						if(point1.x > border3.getPointSecond().x)
+							point1 = border3.getPointSecond();
 
-						if(point2.x < border3.getPuntoDue().x)
-							point2 = border3.getPuntoDue();
+						if(point2.x < border3.getPointSecond().x)
+							point2 = border3.getPointSecond();
 
-						if(point1.x > border.getPuntoUno().x)
-							point1 = border.getPuntoUno();
+						if(point1.x > border.getPointFirst().x)
+							point1 = border.getPointFirst();
 
-						if(point2.x < border.getPuntoUno().x) 
-							point2 = border.getPuntoUno();
+						if(point2.x < border.getPointFirst().x) 
+							point2 = border.getPointFirst();
 
-						if(point1.x > border.getPuntoDue().x) 
-							point1 = border.getPuntoDue();
+						if(point1.x > border.getPointSecond().x) 
+							point1 = border.getPointSecond();
 
-						if(point2.x < border.getPuntoDue().x)
-							point2 = border.getPuntoDue();
+						if(point2.x < border.getPointSecond().x)
+							point2 = border.getPointSecond();
 
 
 						border.setPuntoUno(point1);
@@ -641,12 +641,12 @@ public class Diagram
 
 	public boolean addBorder(Cell sito, Border frontier)
 	{
-		return sito.getVfrontiere().add(frontier);
+		return sito.getBorders().add(frontier);
 	}
 
 	public boolean deleteBorder(Cell sito, Border frontier)
 	{
-		return sito.getVfrontiere().remove(frontier);
+		return sito.getBorders().remove(frontier);
 	}
 
 	public void deleteCell(Cell cell)
@@ -662,7 +662,7 @@ public class Diagram
 			while(listaTrasporto.hasNext())
 			{
 				Cell elementoCorrente = (Cell)listaTrasporto.next();
-				elementoCorrente.getVfrontiere().clear();
+				elementoCorrente.getBorders().clear();
 				addCell(elementoCorrente);
 			}
 
@@ -760,7 +760,7 @@ public class Diagram
 		while(listaTrasporto.hasNext())
 		{
 			Cell elementoCorrente = (Cell)listaTrasporto.next();
-			elementoCorrente.getVfrontiere().clear();
+			elementoCorrente.getBorders().clear();
 			addCell(elementoCorrente);
 		}
 		DISTANZA_MIN = 5;
