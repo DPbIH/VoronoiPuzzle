@@ -6,10 +6,10 @@ public class Border
 {
 	public Border(Cell cellaUno, Cell cellaDue, PointF limit1, PointF limit2)
 	{
-		this.cella1 = cellaUno;                                                                           
-		this.cella2 = cellaDue;
-		p1 = limit1;
-		p2 = limit2;
+		setCellFirst( cellaUno );                                                                           
+		setCellSecond( cellaDue );
+		setPointFirst( limit1 );
+		setPointSecond( limit2 );
 	} 
 
 	public PointF GetIntersection(Cell cella)
@@ -44,9 +44,9 @@ public class Border
 			c1 = -b1*y1 - x1;
 		}
 
-		x1 = cella1.getKernel().x;  
+		x1 = cell1.getKernel().x;  
 		x2 = cella.getKernel().x;
-		y1 = cella1.getKernel().y;  
+		y1 = cell1.getKernel().y;  
 		y2 = cella.getKernel().y;
 		dx = x2-x1;  
 		dy = y2-y1;
@@ -64,8 +64,8 @@ public class Border
 			c2 = -b2*y1 - x1; 
 		}
 
-		float xm = (cella1.getKernel().x + cella.getKernel().x) / 2;
-		float ym = (cella1.getKernel().y + cella.getKernel().y) / 2;
+		float xm = (cell1.getKernel().x + cella.getKernel().x) / 2;
+		float ym = (cell1.getKernel().y + cella.getKernel().y) / 2;
 
 		a3 = b2;
 		b3 = -a2;       
@@ -96,15 +96,15 @@ public class Border
 			return null;
 	} 
 
-	public Cell getVicinoDi(Cell cella)
+	public Cell getSecondCell(Cell cella)
 	{
-		if(cella == cella1)
+		if(cella == cell1)
 		{
-			return cella2;
+			return cell2;
 		}
-		else if(cella == cella2)
+		else if(cella == cell2)
 		{
-			return cella1;
+			return cell1;
 		}
 		
 		return null;
@@ -112,7 +112,7 @@ public class Border
 
 	public boolean isEdge()
 	{
-		return (cella2 == null);
+		return ( cell2 == null ) || ( cell1 == null );
 	}
 
 	public PointF getPointFirst()
@@ -125,24 +125,24 @@ public class Border
 		return p2;
 	}
 
-	public void setPuntoUno(PointF punto)
+	public void setPointFirst(PointF punto)
 	{
 		this.p1 = punto;
 	}
 
-	public void setPuntoDue(PointF punto)
+	public void setPointSecond(PointF punto)
 	{
 		this.p2 = punto;
 	}
 
-	public void setCellaUno(Cell sito)
+	public void setCellFirst(Cell sito)
 	{
-		cella1 = sito;
+		cell1 = sito;
 	}
 
-	public void setCellaDue(Cell sito)
+	public void setCellSecond(Cell sito)
 	{
-		cella2 = sito;
+		cell2 = sito;
 	}
 
 	public boolean isMinorUguale(float u, float d)
@@ -184,6 +184,6 @@ public class Border
 	}
 
 	private PointF p1, p2;
-	private Cell cella1, cella2;
+	private Cell cell1, cell2;
 	private static final double EPSILON = 1E-9;
 }

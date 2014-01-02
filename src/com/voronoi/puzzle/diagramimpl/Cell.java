@@ -245,6 +245,22 @@ public class Cell implements Cloneable
 
 		return clone;
 	}
+	
+	public Border getBorder( Cell neighborCell )
+	{
+		Border border = null;
+		
+		for( Border nextBorder: borders_ )
+		{
+			if( nextBorder.getSecondCell(this) == neighborCell )
+			{
+				border = nextBorder;
+				break;
+			}
+		}
+		
+		return border;
+	}
 
 
 	private ArrayList<Border> borders_;
