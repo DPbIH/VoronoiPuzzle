@@ -191,7 +191,7 @@ public class Cell implements Cloneable
 					int sweepAngle = (getDistance( new PointF(0,0), arcStart) > getDistance( new PointF(0,0), arcEnd)) ? 180 : -180;
 					
 					cellPath.lineTo( arcStart.x, arcStart.y );
-					cellPath.arcTo( ovalRect, startAngle, sweepAngle, true );
+					cellPath.arcTo( ovalRect, startAngle, sweepAngle );
 					cellPath.lineTo( arcEnd.x, arcEnd.y );
 					cellPath.lineTo( currVertex.x, currVertex.y );
 				}
