@@ -12,6 +12,11 @@ public class Border
 		setPointSecond( limit2 );
 	} 
 
+	public boolean containsVertex( PointF vertex )
+	{
+		return vertex.equals(p1) || vertex.equals(p2);
+	}
+	
 	public PointF GetIntersection(Cell cella)
 	{
 		float a1, b1, c1;

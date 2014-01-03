@@ -166,7 +166,12 @@ public class Cell implements Cloneable
 			}
 			else
 			{
-				if( getDistance(prevVertex, currVertex) < MinimalDistance )
+				Border border = getBorderFromVertexes( currVertex, prevVertex );
+				
+				boolean borderIsTooShort = getDistance(prevVertex, currVertex) < MinimalDistance;
+				boolean borderIsEdge     = ( border != null ) ? border.isEdge() : false;
+				
+				if( borderIsTooShort || borderIsEdge )
 				{
 					cellPath.lineTo( currVertex.x, currVertex.y );
 				}
@@ -176,16 +181,17 @@ public class Cell implements Cloneable
 					PointF arcStart = getPointByOffsetFromStart( midPoint, prevVertex, Radius );
 					PointF arcEnd   = getPointByOffsetFromStart( midPoint, currVertex, Radius );
 					
-					RectF  ovalRect = new RectF( 
-							midPoint.x - Radius, 
-							midPoint.y - Radius, 
-							midPoint.x + Radius, 
+					RectF  ovalRect = new RectF(
+							midPoint.x - Radius,
+							midPoint.y - Radius,
+							midPoint.x + Radius,
 							midPoint.y + Radius );
 					
 					int startAngle = (int) (180 / Math.PI * Math.atan2( arcStart.y - midPoint.y, arcStart.x - midPoint.x) );
+					int sweepAngle = (getDistance( new PointF(0,0), arcStart) > getDistance( new PointF(0,0), arcEnd)) ? 180 : -180;
 					
 					cellPath.lineTo( arcStart.x, arcStart.y );
-					cellPath.arcTo( ovalRect, startAngle, 180, true );
+					cellPath.arcTo( ovalRect, startAngle, sweepAngle, true );
 					cellPath.lineTo( arcEnd.x, arcEnd.y );
 					cellPath.lineTo( currVertex.x, currVertex.y );
 				}
@@ -197,6 +203,22 @@ public class Cell implements Cloneable
 		cellPath.close();
 		
 		return cellPath;
+	}
+	
+	private Border getBorderFromVertexes( PointF vertex1, PointF vertex2 )
+	{
+		Border result = null;
+		
+		for( Border border: borders_ )
+		{
+			if( border.containsVertex(vertex1) && border.containsVertex(vertex2) )
+			{
+				result = border;
+				break;
+			}
+		}
+		
+		return result;
 	}
 
 	private float getDistance(PointF p1, PointF p2) 
