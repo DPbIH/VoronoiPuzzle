@@ -57,7 +57,7 @@ public class TilesCreator
 		int cellWidth 		= (int)(bottomright.x - topleft.x);
 		int cellHeight 		= (int)(bottomright.y - topleft.y);
 
-		Path mask 			= getCellPoly( cell );
+		Path mask 			= cell.getCellPath();
 		Bitmap sliceBmp 	= Bitmap.createBitmap( bmp.getWidth(), bmp.getHeight(), Config.ARGB_8888 );
 		Canvas canvas 		= new Canvas( sliceBmp );
 		final int color		= 0xff424242;
@@ -97,26 +97,6 @@ public class TilesCreator
 		}
 
 		return vertexes;
-	}
-
-	private Path getCellPoly( Cell cell )
-	{
-		Path poly = new Path();
-		Iterator<PointF> it = cell.getVertexes().iterator();
-		if( it.hasNext() )
-		{
-			PointF firstVertex = it.next();
-			poly.moveTo( firstVertex.x, firstVertex.y );
-		}
-
-		while( it.hasNext() )
-		{
-			PointF nextVertex = it.next();
-			poly.lineTo( nextVertex.x, nextVertex.y );
-		}
-		poly.close();
-
-		return poly;
 	}
 
 	private Bitmap getScaledBitmap( Bitmap src, int width, int height )

@@ -213,24 +213,8 @@ public class EditorView extends View
 		Iterator<Cell> cellsIter = (Iterator<Cell>)diagram_.getCellIterator();
 		while( cellsIter.hasNext() )
 		{
-			Cell cell 					= (Cell)cellsIter.next();
-			ArrayList<PointF> vertexes	= (ArrayList<PointF>)cell.getVertexes();
-			
-			Path path = new Path();
-
-			if( ! vertexes.isEmpty() )
-			{
-				path.moveTo( vertexes.get(0).x, vertexes.get(0).y);
-				
-				for(int i = 1; i < vertexes.size(); i++)
-				{
-					path.lineTo( vertexes.get(i).x, vertexes.get(i).y );
-				}
-				
-				path.close();
-
-				canvas.drawPath( path, cellPaint_ );
-			}
+			Cell cell = (Cell)cellsIter.next();
+			canvas.drawPath( cell.getCellPath(), cellPaint_ );
 		}
 	}
 

@@ -2,7 +2,12 @@ package com.voronoi.puzzle.diagramimpl;
 
 import java.util.*;
 
+import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.graphics.PathMeasure;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.Region;
 
 public class Cell implements Cloneable 
 {
@@ -11,7 +16,7 @@ public class Cell implements Cloneable
 		borders_ = new ArrayList<Border>();
 		kernel_ = new PointF(x, y);
 	}
-	
+
 	public Cell(PointF unPunto)
 	{
 		borders_ = new ArrayList<Border>();
@@ -24,71 +29,71 @@ public class Cell implements Cloneable
 		kernel_ = unPunto;
 		this.colore = col;
 	}
-	
+
 	// this method is based on  Jordan curve theorem. http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html 
 	public boolean contains( PointF point )
 	{
-	    boolean isInside = false;
-	    PointF polygon[] = (PointF[])getVertexes().toArray();
-	    float minX = polygon[0].x, maxX = polygon[0].x;
-	    float minY = polygon[0].y, maxY = polygon[0].y;
-	    for (int n = 1; n < polygon.length; n++) 
-	    {
-	        PointF q = polygon[n];
-	        minX = Math.min(q.x, minX);
-	        maxX = Math.max(q.x, maxX);
-	        minY = Math.min(q.y, minY);
-	        maxY = Math.max(q.y, maxY);
-	    }
+		boolean isInside = false;
+		PointF polygon[] = (PointF[])getVertexes().toArray();
+		float minX = polygon[0].x, maxX = polygon[0].x;
+		float minY = polygon[0].y, maxY = polygon[0].y;
+		for (int n = 1; n < polygon.length; n++) 
+		{
+			PointF q = polygon[n];
+			minX = Math.min(q.x, minX);
+			maxX = Math.max(q.x, maxX);
+			minY = Math.min(q.y, minY);
+			maxY = Math.max(q.y, maxY);
+		}
 
-	    if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
-	        return false;
-	    }
+		if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
+			return false;
+		}
 
-	    int i = 0, j = polygon.length - 1;
-	    for ( ; i < polygon.length; j = i++)
-	    {
-	        if ( (polygon[i].y > point.y) != (polygon[j].y > point.y) &&
-	        		point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x )
-	        {
-	            isInside = !isInside;
-	        }
-	    }
+		int i = 0, j = polygon.length - 1;
+		for ( ; i < polygon.length; j = i++)
+		{
+			if ( (polygon[i].y > point.y) != (polygon[j].y > point.y) &&
+					point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x )
+			{
+				isInside = !isInside;
+			}
+		}
 
-	    return isInside;
+		return isInside;
 	}
-	
+
 	public PointF TopLeft()
 	{
 		return CornerPoint( Corner.TOPLEFT );
 	}
-	
+
 	public PointF BottomRight()
 	{
 		return CornerPoint( Corner.BOTTOMRIGHT );
 	}
-	
+
 	private enum Corner { TOPLEFT, BOTTOMRIGHT }
-	
+
 	private PointF CornerPoint( Corner corner )
 	{
 		PointF cornerPoint = new PointF();
-		
+
 		ArrayList<PointF> vertexes = getVertexes();
 		Iterator<PointF> it = vertexes.iterator();
-		
+
 		if( it.hasNext() )
 		{
 			float x, y;
-			
+
 			PointF point = (PointF)it.next();
 			x = point.x;
 			y = point.y;
-			
+
 			while( it.hasNext() )
 			{
 				point = (PointF)it.next();
-				
+
 				if(corner == Corner.BOTTOMRIGHT )
 				{
 					x = Math.max( x, point.x );
@@ -100,17 +105,17 @@ public class Cell implements Cloneable
 					y = Math.min( y, point.y );
 				}
 			}
-			
+
 			cornerPoint.set(x, y);
 		}
-		
+
 		return cornerPoint;
 	}
-	
+
 	public ArrayList<PointF> getVertexes()
 	{   
 		ArrayList<PointF>  vertexes = new ArrayList<PointF> ();
-		
+
 		Iterator<Border> bordersIter = borders_.iterator();
 		while(bordersIter.hasNext())
 		{
@@ -121,7 +126,8 @@ public class Cell implements Cloneable
 			if(!(vertexes.contains(point1st)))
 			{
 				vertexes.add(point1st);
-			} 
+			}
+
 			if(!(vertexes.contains(point2nd)))
 			{
 				vertexes.add(point2nd);
@@ -141,20 +147,102 @@ public class Cell implements Cloneable
 		}
 		return vertexes;
 	}
+	
+	public Path getCellPath()
+	{
+		final float MinimalDistance	= 100;
+		final float Radius			= 15;
+
+		Path cellPath = new Path();
+		
+		ArrayList<PointF> vertexes = getVertexes();
+		
+		PointF prevVertex = null;
+		for( PointF currVertex: vertexes )
+		{
+			if( prevVertex == null )
+			{
+				cellPath.moveTo( currVertex.x, currVertex.y );
+			}
+			else
+			{
+				if( getDistance(prevVertex, currVertex) < MinimalDistance )
+				{
+					cellPath.lineTo( currVertex.x, currVertex.y );
+				}
+				else
+				{
+					PointF midPoint = getMidPoint( prevVertex, currVertex );
+					PointF arcStart = getPointByOffsetFromStart( midPoint, prevVertex, Radius );
+					PointF arcEnd   = getPointByOffsetFromStart( midPoint, currVertex, Radius );
+					
+					RectF  ovalRect = new RectF( 
+							midPoint.x - Radius, 
+							midPoint.y - Radius, 
+							midPoint.x + Radius, 
+							midPoint.y + Radius );
+					
+					int startAngle = (int) (180 / Math.PI * Math.atan2( arcStart.y - midPoint.y, arcStart.x - midPoint.x) );
+					
+					cellPath.lineTo( arcStart.x, arcStart.y );
+					cellPath.arcTo( ovalRect, startAngle, 180, true );
+					cellPath.lineTo( arcEnd.x, arcEnd.y );
+					cellPath.lineTo( currVertex.x, currVertex.y );
+				}
+			}
+			
+			prevVertex = currVertex;
+		}
+		
+		cellPath.close();
+		
+		return cellPath;
+	}
+
+	private float getDistance(PointF p1, PointF p2) 
+	{
+		float distance = (float)Math.sqrt(
+				Math.pow(p2.x-p1.x, 2) + 
+				Math.pow(p2.y-p1.y, 2) );
+		
+		return distance;
+	}
+
+	private PointF getMidPoint(PointF point1st, PointF point2nd)
+	{
+		PointF midPoint = new PointF();
+		midPoint.x = (point1st.x + point2nd.x)/2;
+		midPoint.y = (point1st.y + point2nd.y)/2;
+
+		return midPoint;
+	}
+	
+	private PointF getPointByOffsetFromStart( PointF pointStart, PointF pointEnd, float distance )
+	{
+		//x[3] = x1 + d * (x2-x1) / sqrt( (x2-x1)^2 + (y2 - y1)^2 )
+		//y[3] = y1 + d * (y2-y1) / sqrt( (x2-x1)^2 + (y2 - y1)^2 )
+		
+		PointF point = new PointF();
+		
+		point.x = pointStart.x + distance * ( pointEnd.x - pointStart.x ) / getDistance(pointStart, pointEnd);
+		point.y = pointStart.y + distance * ( pointEnd.y - pointStart.y ) / getDistance(pointStart, pointEnd);
+		
+		return point;
+	}
 
 	private float getAngle(PointF p1, PointF p2)
 	{
 		float result = 0;
-		
+
 		if( ! areEqual(p1, p2) ) 
 		{
 			float b = (p2.x - p1.x);
 			float a = (p1.y - p2.y);
 			result = (float)(Math.atan2(a, b) + Math.PI);
 		}
-		
+
 		return result;
-		
+
 	}
 
 	private boolean areEqual(float lhs, float rhs)
@@ -245,11 +333,11 @@ public class Cell implements Cloneable
 
 		return clone;
 	}
-	
+
 	public Border getBorder( Cell neighborCell )
 	{
 		Border border = null;
-		
+
 		for( Border nextBorder: borders_ )
 		{
 			if( nextBorder.getSecondCell(this) == neighborCell )
@@ -258,7 +346,7 @@ public class Cell implements Cloneable
 				break;
 			}
 		}
-		
+
 		return border;
 	}
 
