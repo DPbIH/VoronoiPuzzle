@@ -42,7 +42,7 @@ public class TilesCreator
 			newTile.setTargetPos( nextCell.TopLeft() );
 			newTile.setNumber( diagram.getCellsArray().indexOf( nextCell ) );
 			newTile.setBitmap( getBitmapSlice( scaledBmp, nextCell ) );
-			newTile.setVertexes( getCellVertexesWithRelativeCoordinates( nextCell ) );
+			newTile.setBordersPolygon( nextCell.getCellPath() );
 
 			tiles.add( newTile );
 		}

@@ -158,7 +158,7 @@ public class GameView extends View
 		
 		if( ! tile.IsOnTargetPos() )
 		{
-			canvas.drawPath( tile.getPathFromVertexes(), tile.isHighlighted() ? tileHighlightedPaint_ : tilePaint_ );
+			canvas.drawPath( tile.getBordersPolygonForCurrentPos(), tile.isHighlighted() ? tileHighlightedPaint_ : tilePaint_ );
 		}
 	}
 

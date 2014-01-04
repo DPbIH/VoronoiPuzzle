@@ -19,9 +19,9 @@ public class Tile
 	private int 	rotationAngle_ 			= 0;
 	private static final int rotationRatio_ = 90;
 	private static final int fullRound_		= 360;
-	private ArrayList<PointF> vertexes_;
 	private boolean isHighlighted_			= false;
 	private boolean pinned_					= false;
+	private Path 	borders_				= null;
 
 	public void setHighlighted( boolean val )
 	{
@@ -106,28 +106,28 @@ public class Tile
 	{
 		return rotationAngle_;
 	}
-
-	public ArrayList<PointF> getVertexes()
+	
+	public void setBordersPolygon( Path bordersPoly )
 	{
-		return vertexes_;
+		borders_ = bordersPoly;
 	}
-
-	public void setVertexes( ArrayList<PointF> vertexes )
+	
+	public Path getBordersPolygon()
 	{
-		this.vertexes_ = vertexes;
+		return borders_;
 	}
 
 	public boolean contains( PointF point )
 	{
-		Region region = getRegionForPath( getPathFromVertexes() );
+		Region region = getRegionForPath( getBordersPolygonForCurrentPos() );
 		
 		return region.contains( (int)point.x, (int)point.y);
 	}
 
 	public boolean intersectsWith( Tile other )
 	{
-		Region region = getRegionForPath( getPathFromVertexes() );
-		Region regionOther = getRegionForPath( other.getPathFromVertexes() );
+		Region region = getRegionForPath( getBordersPolygonForCurrentPos() );
+		Region regionOther = getRegionForPath( other.getBordersPolygonForCurrentPos() );
 		
 		return region.op( regionOther, Region.Op.INTERSECT ); 
 	}
@@ -156,24 +156,9 @@ public class Tile
 		pinned_ = false;
 	}
 	
-	public Path getPathFromVertexes() 
+	public Path getBordersPolygonForCurrentPos() 
 	{	
-		Path path = new Path();
-		
-		Iterator<PointF> it = vertexes_.iterator();
-		if( it.hasNext() )
-		{
-			PointF firstVertex = it.next();
-			path.moveTo( firstVertex.x, firstVertex.y );
-		}
-		
-		while( it.hasNext() )
-		{
-			PointF nextVertex = it.next();
-			path.lineTo( nextVertex.x, nextVertex.y );
-		}
-		
-		path.close();
+		Path path = borders_;
 		
 		if( IsRotated() )
 		{
@@ -183,8 +168,8 @@ public class Tile
 		//now. move path to current position
 		RectF bounds = new RectF();
 		path.computeBounds(bounds, true);
-		float dx = (float)Math.sqrt(Math.pow( currentPos_.x - bounds.left, 2) );
-		float dy = (float)Math.sqrt(Math.pow( currentPos_.y - bounds.top, 2) );
+		float dx = currentPos_.x - bounds.left;
+		float dy = currentPos_.y - bounds.top;
 		path.offset(dx, dy);
 		
 		return path;
