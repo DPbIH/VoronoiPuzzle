@@ -156,6 +156,7 @@ public class Cell implements Cloneable
 		Path cellPath = new Path();
 		
 		ArrayList<PointF> vertexes = getVertexes();
+		vertexes.add( vertexes.get(0) ); // making loop of the array
 		
 		PointF prevVertex = null;
 		for( PointF currVertex: vertexes )
@@ -182,13 +183,11 @@ public class Cell implements Cloneable
 					PointF arcEnd   = getPointByOffsetFromStart( midPoint, currVertex, Radius );
 					
 					RectF  ovalRect = new RectF(
-							midPoint.x - Radius,
-							midPoint.y - Radius,
-							midPoint.x + Radius,
-							midPoint.y + Radius );
+							midPoint.x - Radius, midPoint.y - Radius,
+							midPoint.x + Radius, midPoint.y + Radius );
 					
 					int startAngle = (int) (180 / Math.PI * Math.atan2( arcStart.y - midPoint.y, arcStart.x - midPoint.x) );
-					int sweepAngle = (getDistance( new PointF(0,0), arcStart) > getDistance( new PointF(0,0), arcEnd)) ? 180 : -180;
+					int sweepAngle = (getDistance( new PointF(0,0), arcStart ) > getDistance( new PointF(0,0), arcEnd )) ? 180 : -180;
 					
 					cellPath.lineTo( arcStart.x, arcStart.y );
 					cellPath.arcTo( ovalRect, startAngle, sweepAngle );
