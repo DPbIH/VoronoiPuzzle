@@ -59,13 +59,13 @@ public class Board
 		
 		// check if tile will overlap other tiles
 		PointF currentPosTmp = tile.getCurrentPos();
-		tile.Move(newPos);
+		tile.move(newPos);
 		
 		for (Tile other : tiles_)
 		{
 			if( tile.intersectsWith( other ) )
 			{
-				tile.Move( currentPosTmp );
+				tile.move( currentPosTmp );
 				return false;
 			}
 		}

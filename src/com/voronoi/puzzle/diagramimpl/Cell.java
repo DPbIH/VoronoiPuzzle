@@ -27,7 +27,6 @@ public class Cell implements Cloneable
 	{
 		borders_ = new ArrayList<Border>();
 		kernel_ = unPunto;
-		this.colore = col;
 	}
 
 	// this method is based on  Jordan curve theorem. http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html 
@@ -327,24 +326,12 @@ public class Cell implements Cloneable
 
 	}
 
-	public void setColore(boolean rossoblu)
-	{
-		colore = rossoblu;
-	}
-
-	public boolean getColore()
-	{
-		return colore;
-	}
-
-
 	public Object clone()
 	{
 		Cell clone  = null;
 		try
 		{
 			clone = (Cell)super.clone();
-			clone.setColore(this.colore);
 		}
 		catch(CloneNotSupportedException e)
 		{
@@ -372,8 +359,8 @@ public class Cell implements Cloneable
 	}
 
 
-	private ArrayList<Border> borders_;
-	private PointF kernel_;
-	private static final double EPS = 1E-13;
-	private boolean colore = false;
+	private ArrayList<Border>	borders_;
+	private PointF 				kernel_;
+	private static final double	EPS		= 1E-13;
+	
 }

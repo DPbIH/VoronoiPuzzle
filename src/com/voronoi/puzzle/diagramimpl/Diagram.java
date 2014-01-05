@@ -828,8 +828,7 @@ public class Diagram
 			PointF kernel = cella.getKernel();
 			double x = kernel.x;
 			double y = kernel.y;
-			boolean colore = cella.getColore();
-			out.println(x + "|" + y + "|" + Boolean.toString(colore));
+			out.println( x + "|" + y );
 		}
 		file.close();
 	}
@@ -845,10 +844,8 @@ public class Diagram
 			{
 				float x = Float.parseFloat(divisore.nextToken());
 				float y = Float.parseFloat(divisore.nextToken());
-				boolean colore = (Boolean.valueOf(divisore.nextToken())).booleanValue();
 				PointF p = new PointF(x, y);
 				Cell cella = new Cell (p);
-				cella.setColore(colore);
 				this.addCell(cella);
 			}
 			catch(NumberFormatException ec)
@@ -896,7 +893,6 @@ public class Diagram
 			Cell elementoCorrente = (Cell)listaTrasporto.next();
 			punto = elementoCorrente.getKernel();
 			cella = new Cell(punto);
-			cella.setColore(elementoCorrente.getColore());
 			addCell(cella);
 		}
 	}

@@ -5,7 +5,8 @@ import java.io.File;
 import android.app.Application;
 import android.os.Environment;
 
-public class VoronoiApplication extends Application {
+public class VoronoiApplication extends Application 
+{
 	private String appPath_, 
 	imgGalleryPath_,
 	savedGamesPath_;
@@ -14,25 +15,25 @@ public class VoronoiApplication extends Application {
     public void onCreate()
 	{
         super.onCreate();
-        DeployAppFileSystem();
+        deployAppFileSystem();
 	}
 	
-	public String ImageGalleryPath()
+	public String imageGalleryPath()
 	{
 		return imgGalleryPath_;
 	}
 	
-	public String SavedGamesPath()
+	public String savedGamesPath()
 	{
 		return savedGamesPath_;
 	}
 	
-	public String AppFilesPath()
+	public String appFilesPath()
 	{
 		return appPath_;
 	}
 	
-	private void InitPaths()
+	private void initPaths()
 	{
 		//appPath_ = getApplicationContext().getFilesDir().getAbsolutePath();
 		if( Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) )
@@ -42,15 +43,16 @@ public class VoronoiApplication extends Application {
 		imgGalleryPath_ = appPath_ + File.separator + "Gallery";
 		savedGamesPath_ = appPath_ + File.separator + "SavedGames";
 	}
-	private void DeployAppFileSystem()
+	
+	private void deployAppFileSystem()
 	{
-		InitPaths();
+		initPaths();
 		
-		CreateDir( imgGalleryPath_ );
-		CreateDir( savedGamesPath_ );
+		createDir( imgGalleryPath_ );
+		createDir( savedGamesPath_ );
 	}
 	
-	private void CreateDir( String path )
+	private void createDir( String path )
 	{
 		File newDir = new File(path);
 		if( ! newDir.exists() )

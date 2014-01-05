@@ -28,7 +28,8 @@ public class SeekBarDialog
 		initButtonListeners();
 	}
 
-	private void initControls() {
+	private void initControls()
+	{
 		seekBarValue_	= new TextView( activity_ );
 		seekBarValue_.setGravity(Gravity.CENTER_HORIZONTAL);
 		seekBarValue_.setTextSize( TEXT_SIZE );
@@ -37,7 +38,6 @@ public class SeekBarDialog
 		seekBar_.setOnSeekBarChangeListener( 
 				new SeekBar.OnSeekBarChangeListener()
 				{ 
-
 					@Override 
 					public void onProgressChanged(
 							SeekBar seekBar, int progress, boolean fromUser) 
@@ -58,7 +58,8 @@ public class SeekBarDialog
 				});
 	}
 
-	private void initButtonListeners() {
+	private void initButtonListeners()
+	{
 		DialogInterface.OnClickListener defaultListener = new DialogInterface.OnClickListener()
 		{
 			@Override

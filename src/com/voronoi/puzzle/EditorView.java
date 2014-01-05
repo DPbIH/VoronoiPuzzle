@@ -256,7 +256,7 @@ public class EditorView extends View
 		return diagram_;
 	}
 
-	private Diagram 		diagram_;
+	private Diagram			diagram_;
 	private BitmapDrawable 	bgImg_;
 	
 	private int lineWidth_ 				= 3;

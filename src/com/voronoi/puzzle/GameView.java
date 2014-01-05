@@ -68,7 +68,7 @@ public class GameView extends View
             	Tile tile = board_.getTileAtPos( toBoardPos( new PointF( e.getX(), e.getY() ) ) );
         		if( tile != null )
         		{
-        			tile.Rotate();
+        			tile.rotate();
             		invalidate();
         		}
                 
@@ -110,7 +110,7 @@ public class GameView extends View
 	{
 		for( Tile tile: board_.getTiles() )
 		{
-			if( tile.IsOnTargetPos() )
+			if( tile.isOnTargetPos() )
 			{
 				drawTile( canvas, tile );
 			}
@@ -118,7 +118,7 @@ public class GameView extends View
 		
 		for( Tile tile: board_.getTiles() )
 		{
-			if( ! tile.IsOnTargetPos() )
+			if( ! tile.isOnTargetPos() )
 			{
 				drawTile( canvas, tile );
 			}
@@ -156,7 +156,7 @@ public class GameView extends View
 				tile.getCurrentPos().y,
 				tilePaint_ );
 		
-		if( ! tile.IsOnTargetPos() )
+		if( ! tile.isOnTargetPos() )
 		{
 			canvas.drawPath( tile.getBordersPolygonForCurrentPos(), tile.isHighlighted() ? tileHighlightedPaint_ : tilePaint_ );
 		}
@@ -226,14 +226,14 @@ public class GameView extends View
 		
 		PointF fingerPos = new PointF( event.getX(), event.getY() );
 
-		selectedTile_.Move( moveCalculator_.getTileNewPos( toBoardPos( fingerPos ) ) );
-		if( selectedTile_.DistanceToTarget() < 10 )
+		selectedTile_.move( moveCalculator_.getTileNewPos( toBoardPos( fingerPos ) ) );
+		if( selectedTile_.distanceToTarget() < 10 )
 		{
-			selectedTile_.MoveToTarget();
-			selectedTile_.Pin();
+			selectedTile_.moveToTarget();
+			selectedTile_.pin();
 		}
 		
-		if( selectedTile_.IsOnTargetPos() )
+		if( selectedTile_.isOnTargetPos() )
 		{
 			// NotifyTileTargeted( selectedTile_ );
 		}

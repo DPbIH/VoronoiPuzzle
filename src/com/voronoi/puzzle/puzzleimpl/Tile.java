@@ -35,7 +35,7 @@ public class Tile
 	
 	public Bitmap getBitmap()
 	{
-		return IsRotated() ? rotateBitmap( bmp_, rotationAngle_ ) : bmp_;
+		return isRotated() ? rotateBitmap( bmp_, rotationAngle_ ) : bmp_;
 	}
 
 	public void setBitmap(Bitmap bmp)
@@ -73,12 +73,12 @@ public class Tile
 		this.targetPos_ = targetPos;
 	}
 
-	public boolean IsOnTargetPos()
+	public boolean isOnTargetPos()
 	{
 		return targetPos_.equals( currentPos_ ) && (rotationAngle_ == 0);
 	}
 
-	public void Move( PointF newPos )
+	public void move( PointF newPos )
 	{
 		if( pinned_ )
 		{
@@ -88,7 +88,7 @@ public class Tile
 		currentPos_ = newPos;
 	}
 
-	public void Rotate()
+	public void rotate()
 	{
 		rotationAngle_ += rotationRatio_;
 		if( rotationAngle_ == fullRound_ )
@@ -97,12 +97,12 @@ public class Tile
 		}
 	}
 	
-	public boolean IsRotated()
+	public boolean isRotated()
 	{
 		return ( rotationAngle_ != 0 );
 	}
 	
-	public int GetRotationAngle()
+	public int getRotationAngle()
 	{
 		return rotationAngle_;
 	}
@@ -132,7 +132,7 @@ public class Tile
 		return region.op( regionOther, Region.Op.INTERSECT ); 
 	}
 	
-	public float DistanceToTarget()
+	public float distanceToTarget()
 	{
 		float distance = (float)Math.sqrt(
 				Math.pow(targetPos_.x-currentPos_.x, 2) + 
@@ -141,26 +141,26 @@ public class Tile
 		return distance;
 	}
 	
-	public void MoveToTarget()
+	public void moveToTarget()
 	{
-		Move( getTargetPos() );
+		move( getTargetPos() );
 	}
 	
-	public void Pin()
+	public void pin()
 	{
 		pinned_ = true;
 	}
 	
-	public void Unpin()
+	public void unpin()
 	{
 		pinned_ = false;
 	}
 	
 	public Path getBordersPolygonForCurrentPos() 
 	{	
-		Path path = borders_;
+		Path path = getBordersPolygon();
 		
-		if( IsRotated() )
+		if( isRotated() )
 		{
 			path = rotatePath( path, rotationAngle_ );
 		}
@@ -180,7 +180,9 @@ public class Tile
 		Region region	= new Region();
 		RectF bounds 	= new RectF();
 		path.computeBounds(bounds, true);
-		region.setPath( path, new Region( (int)bounds.left, (int)bounds.top, (int)bounds.right, (int)bounds.bottom) );
+		region.setPath( path, 
+				new Region( (int)bounds.left, (int)bounds.top,
+						(int)bounds.right, (int)bounds.bottom) );
 		
 		return region;
 	}

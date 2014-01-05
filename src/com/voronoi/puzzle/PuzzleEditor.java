@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class PuzzleEditor extends Activity implements MediaScannerConnectionClient 
+public class PuzzleEditor extends Activity implements MediaScannerConnectionClient
 {
 	private static final int PICK_IMAGE_FROM_CHOOSER 	= 1;
 	private static final int PICK_IMAGE_USE_CAMERA 		= 2;
@@ -71,13 +71,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		}
 	}
 	
-	public void loadImage(View view)
-	{
-		ImageSelectorDialog imageSelector = new ImageSelectorDialog();
-		imageSelector.show( getFragmentManager(), "dialog" );
-	}
-
-	public void startGamePlay(View view) 
+	public void startGamePlay( View view ) 
 	{
 		String[] diagramStrings	= editor_.getDiagram().toStringArray();
 		
@@ -85,13 +79,13 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		editor_.getImage().compress(Bitmap.CompressFormat.JPEG, 30, bs);
 		
 		Intent intent = new Intent(this, GamePlay.class);
-		intent.putExtra( GlobalConstants.DIAGRAM_STRING_EXTRA , diagramStrings );
-		intent.putExtra( GlobalConstants.PUZZLE_IMAGE_EXTRA, bs.toByteArray() );
+		intent.putExtra( GlobalConstants.DIAGRAM_STRING_EXTRA,	diagramStrings );
+		intent.putExtra( GlobalConstants.PUZZLE_IMAGE_EXTRA, 	bs.toByteArray() );
 		
 		startActivity(intent);
 	}
 
-	public void SetCellsEraseable(View view) 
+	public void setCellsEraseable( View view ) 
 	{
 		boolean on = ((ToggleButton)view).isChecked();
 		if(on)
@@ -121,7 +115,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		editor_.setDraggingEnabled(on);
 	}
 
-	public void createRandomDiagram(View view)
+	public void createRandomDiagram( View view )
 	{
 		final SeekBarDialog seek = new SeekBarDialog(this);
 		seek.setMax( maxTiles );
@@ -134,6 +128,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 				dialog.dismiss();
 			}
 		});
+		
 		seek.show();
 	}
 	
@@ -154,6 +149,12 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 		return super.onKeyDown( keyCode, event );
 	}
+	
+	public void loadImage(View view)
+	{
+		ImageSelectorDialog imageSelector = new ImageSelectorDialog();
+		imageSelector.show( getFragmentManager(), "dialog" );
+	}
 
 	public static class ImageSelectorDialog extends DialogFragment {
 		@Override
@@ -161,9 +162,10 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.PickImageSource);
-			builder.setItems(R.array.ImageSourcesArray, 
-					new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int which) {
+			builder.setItems(R.array.ImageSourcesArray, new DialogInterface.OnClickListener()
+			{
+				public void onClick( DialogInterface dialog, int which )
+				{
 					PuzzleEditor editor = (PuzzleEditor)getActivity();
 					switch(which)
 					{
@@ -196,7 +198,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 		}
 	}
 
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	protected void onActivityResult( int requestCode, int resultCode, Intent data ) 
 	{
 		switch(requestCode)
 		{
@@ -217,7 +219,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 	private File createFileForImageInAppGallery() throws IOException
 	{
-		File appGallery = new File( ((VoronoiApplication)this.getApplication()).ImageGalleryPath() );
+		File appGallery = new File( ((VoronoiApplication)this.getApplication()).imageGalleryPath() );
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = "Gallery_" + timeStamp;
 		File image = File.createTempFile( imageFileName, ".jpg", appGallery );
@@ -331,7 +333,7 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 
 	public void pickImageFromAppGallery()
 	{
-		String path = ((VoronoiApplication)this.getApplication()).ImageGalleryPath();
+		String path = ((VoronoiApplication)this.getApplication()).imageGalleryPath();
 		scanDirectory( path );
 	}
 
