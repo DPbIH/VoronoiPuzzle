@@ -66,7 +66,7 @@ public class GameView extends View
             public boolean onDoubleTap(MotionEvent e) 
             {
             	Tile tile = board_.getTileAtPos( toBoardPos( new PointF( e.getX(), e.getY() ) ) );
-        		if( tile != null )
+        		if( ( tile != null ) && ! tile.isOnTargetPos() )
         		{
         			tile.rotate();
             		invalidate();
@@ -101,8 +101,7 @@ public class GameView extends View
 			drawCells( canvas );
 		}
 		
-		drawBorders(canvas);
-		
+		drawBorders( canvas );
 		drawTiles( canvas );
 	}
 
@@ -201,12 +200,13 @@ public class GameView extends View
 	{
 		PointF boardPos = toBoardPos( new PointF( event.getX(), event.getY() ) );
 		
-		selectedTile_ = board_.getTileAtPos( boardPos );
-		if( selectedTile_ == null )
+		Tile tile = board_.getTileAtPos( boardPos );
+		if( ( tile == null ) || tile.isOnTargetPos() )
 		{
 			return;
 		}
 		
+		selectedTile_ = tile;
 		board_.onTileSelected( selectedTile_ );
 		
 		moveCalculator_.setTileStartPos( selectedTile_.getCurrentPos() );
