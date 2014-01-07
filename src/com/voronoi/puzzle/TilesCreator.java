@@ -12,7 +12,6 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
 
 import com.voronoi.puzzle.diagramimpl.Cell;
 import com.voronoi.puzzle.diagramimpl.Diagram;

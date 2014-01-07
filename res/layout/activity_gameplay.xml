@@ -46,6 +46,17 @@
             android:onClick="enableHintIndex" />
         
     </LinearLayout>
+    
+    <com.voronoi.puzzle.GameView
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:layout_toLeftOf="@id/hintsLayout"
+        android:background="@color/beige" />
+    
 
     <SlidingDrawer
         android:id="@+id/tilesPanel"
@@ -77,15 +88,5 @@
             android:background="@color/translucent_gray"
             android:orientation="horizontal" />
     </SlidingDrawer>
-    
-    <com.voronoi.puzzle.GameView
-        android:id="@+id/gameView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:layout_toLeftOf="@id/hintsLayout"
-        android:background="@color/beige" />
 
 </RelativeLayout>
