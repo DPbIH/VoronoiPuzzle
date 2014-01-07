@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,6 +26,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
@@ -52,23 +54,28 @@ public class PuzzleEditor extends Activity implements MediaScannerConnectionClie
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		getMenuInflater().inflate(R.menu.puzzle_editor, menu);
 		return true;
 	}
 
 	public void setImage( Uri uri )
-	{
-		imgUri_ = uri;
+	{	
 		try 
 		{
 			editor_.setBackgroundImage( uri );
+			enableCreateBtn( true );
 		} 
 		catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void enableCreateBtn( boolean enable )
+	{
+		((Button)findViewById(R.id.createPuzzleBtn)).setEnabled( enable );;
 	}
 	
 	public void startGamePlay( View view ) 
