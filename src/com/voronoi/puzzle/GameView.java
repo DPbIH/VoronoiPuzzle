@@ -352,26 +352,15 @@ public class GameView extends View
 	public void addTile( Tile tile )
 	{
 		board_.addTile(tile);
+		invalidate();
 	}
 	
 	public void removeTile( Tile tile )
 	{
 		board_.removeTile(tile);
+		invalidate();
 	}
 	
-	/*public void createTiles()
-	{
-		tiles_.clear();
-		
-		if( (image_ == null) || (diagram_ == null) )
-		{
-			return;
-		}
-		
-		TilesCreator tc = new TilesCreator();
-		tiles_ = tc.getTiles(diagram_, image_);
-	}*/
-
 	public void reinit()
 	{
 		clearBoard();

@@ -1,6 +1,8 @@
 package com.voronoi.puzzle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.voronoi.puzzle.diagramimpl.Diagram;
 import com.voronoi.puzzle.puzzleimpl.Tile;
@@ -13,17 +15,23 @@ import android.graphics.BitmapFactory;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 public class GamePlay extends Activity {
 
-	private GameView 		gameView_	= null;
-	private Diagram 		diagram_	= null;
-	private Bitmap 			image_		= null;
-	private ArrayList<Tile>	tiles_		= new ArrayList<Tile>();
+	private GameView 		gameView_		= null;
+	private Diagram 		diagram_		= null;
+	private Bitmap 			image_			= null;
+	private LinearLayout	tilesGallery_	= null;
+	private ArrayList<Tile>			tiles_				= new ArrayList<Tile>();
+	private Map<ImageView, Tile>	tileViewMapping_	= new HashMap<ImageView, Tile>();
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gameplay);
 		
@@ -40,7 +48,8 @@ public class GamePlay extends Activity {
 			byte[] bmpByteArr = getIntent().getByteArrayExtra(GlobalConstants.PUZZLE_IMAGE_EXTRA);
 			image_ = BitmapFactory.decodeByteArray( bmpByteArr, 0, bmpByteArr.length );   
 			
-			createTiles();		
+			createTiles();
+			initTilesGallery();
 			initGameView();
 		}
 		catch( Exception ex )
@@ -48,17 +57,49 @@ public class GamePlay extends Activity {
 			return;
 		}
 	}
-
-	private void initGameView()
+	
+	private void initTilesGallery()
 	{
-		gameView_ 	= (GameView)findViewById(R.id.gameView);
-		gameView_.setDiagram( diagram_ );
-		gameView_.setImage(image_);
-		
+		tilesGallery_ = (LinearLayout) findViewById(R.id.tilesGallery);
+
 		for( Tile tile: tiles_ )
 		{
-			gameView_.addTile(tile);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			lp.setMargins(10, 10, 10, 10);
+			lp.height = 100; lp.width = 100;
+			
+			ImageView tileIcon = new ImageView( getApplicationContext() );
+			tileIcon.setLayoutParams( lp );
+			tileIcon.setScaleType( ImageView.ScaleType.CENTER_INSIDE );
+			tileIcon.setImageBitmap( tile.getBitmap() );
+			tileIcon.setOnClickListener(new View.OnClickListener() 
+			{
+				@Override
+				public void onClick(View view)
+				{
+					ImageView img = (ImageView)view;
+					Tile tile = tileViewMapping_.get(img);
+					
+					if( tile != null)
+					{
+						gameView_.addTile(tile);
+						//img.setEnabled(false);
+					}
+				}
+			});
+
+			tilesGallery_.addView(tileIcon);
+			tileViewMapping_.put(tileIcon, tile);
 		}
+	}
+	
+	private void initGameView()
+	{
+		gameView_ = (GameView)findViewById(R.id.gameView);
+		gameView_.setDiagram( diagram_ );
+		gameView_.setImage(image_);
 	}
 	
 	public void createTiles()
@@ -75,7 +116,8 @@ public class GamePlay extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
